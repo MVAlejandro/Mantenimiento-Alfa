@@ -1,0 +1,48 @@
+/* Fondo general */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Estructura */
+main {
+  flex: 1; 
+}
+
+/*--- BARRA DE RELLENO SUPERIOR ---*/
+#top_bar {
+    background-color: #8FC74A;
+    height: 38.4px;
+}
+
+/*--- BARRA DE NAVEGACION PRINCIPAL ---*/
+#nav_principal {
+    background-color: #7B7B7B !important;
+    border: 1px solid white;
+    padding: 0px 50px 0px 40px;
+}
+#nav_logo {
+    padding: 10px;   
+}
+.nav-link.active {
+    color: #AAB396 !important;
+    font-weight: bold;
+}
+.nav-link.active::after {
+    width: 100%;
+}
+
+
+.titulo_opcion {
+    font-weight: bold;
+}
+
+/*--- FOOTER ---*/
+#site_footer {
+    background-color: #222222;
+}
+
+#texto_footer {
+    color: white;
+}

@@ -1,0 +1,66 @@
+/* Fondo general */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+/* Estructura */
+main {
+  flex: 1; 
+}
+
+/*--- BARRA DE NAVEGACION PRINCIPAL ---*/
+.navbar-nav {
+    display: none !important;
+}
+
+/* CONTENEDOR PRINCIPAL */
+/* Cards de navegación */
+.row {
+    display: flex;
+    gap: 30px;
+}
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.card-body .btn-wrapper {
+    margin-top: auto;
+}
+.card-subtext {
+    font-size: small;
+}
+.card-img {
+    height: 200px !important;
+}
+.card-img-top {
+    width: 100px !important;
+    object-fit: contain;
+}
+
+.btn {
+    border: 1px solid #8FC74A !important;
+    color: #8FC74A !important;
+    background-color: transparent;
+    font-weight: bolder !important;
+    transition: all 0.2s ease;
+}
+.btn:hover {
+    background-color: #8FC74A !important;
+    color: white !important;
+}
+
+/*--- FOOTER ---*/
+#site_footer {
+    background-color: #222222;
+}
+
+#texto_footer {
+    color: white;
+}

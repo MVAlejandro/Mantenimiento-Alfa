@@ -1,0 +1,49 @@
+
+/*--- BARRA DE RELLENO SUPERIOR ---*/
+#top_bar {
+    background-color: #8FC74A;
+    height: 38.4px;
+}
+
+/*--- BARRA DE NAVEGACION PRINCIPAL ---*/
+#nav_principal {
+    background-color: #7B7B7B !important;
+    border: 1px solid white;
+    padding: 0px 50px 0px 40px;
+}
+#nav_logo {
+    padding: 10px;   
+}
+.nav-link.active {
+    color: #8FC74A !important;
+    font-weight: bold;
+}
+.nav-link.active::after {
+    width: 100%;
+}
+
+@media (min-width: 992px){
+
+    .nav-link {
+        position: relative;
+        color: #000; 
+        transition: color 0.3s ease;
+    }
+    .nav-link:hover {
+        color: #8FC74A; 
+    }
+    .nav-link::after {
+        content: "";
+        display: block;
+        width: 0;
+        height: 3px;
+        background: #8FC74A; 
+        transition: width 0.3s;
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+    }
+    .nav-link:hover::after {
+        width: 100%; 
+    }
+}
