@@ -33,21 +33,75 @@
                         </div>
                         <p><strong>Ingrese los datos de la tarea que desea agregar:</strong></p>
                         <!-- Formulario -->
-                        <form class="text-end">
-                            <div class="unidad form-floating mb-3">
+                        <form>
+                            <div class="tarea form-floating mb-3">
                                 <input type="text" id="nombre_t" class="form-control" placeholder="Nombre">
                                 <label for="nombre_t">Nombre</label>
                                 <p class="error invalid-feedback" id="error-nombre" style="color: red;"></p>
                             </div>
-                            <div class="unidad form-floating mb-3">
-                                <input type="text" id="sistema" class="form-control" placeholder="Año">
-                                <label for="sistema">Sistema</label>
+
+                            <div class="tarea row mb-3">
+                                    <div class="col-lg-2 d-flex align-items-center">
+                                        <label for="sistema" class="form-label" style="padding: 16px;">Sistema:</label>
+                                    </div>
+                                    <div class="col-lg-9 ms-auto">
+                                        <select id="sistema" class="form-select" aria-label="Default select example" style="padding: 16px;">
+                                            <option value="1">Seleccione...</option>
+                                            <option value="2">Mecánico</option>
+                                            <option value="3">Hidráulico</option>
+                                        </select>
+                                    </div>
                                 <p class="error invalid-feedback" id="error-sistema" style="color: red;"></p>
                             </div>
-                            <div class="unidad form-floating mb-3">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <div class="tarea form-floating mb">
+                                        <input type="date" id="fecha" class="form-control" placeholder="Fecha">
+                                        <label for="fecha">Fecha programada</label>
+                                        <p class="error invalid-feedback" id="error-refacciones" style="color: red;"></p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="tarea form-floating mb">
+                                        <input type="text" id="periodicidad" class="form-control" placeholder="Periodicidad">
+                                        <label for="periodicidad">Periodicidad</label>
+                                        <p class="error invalid-feedback" id="error-periodicidad" style="color: red;"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tarea row mb-3">
+                                    <div class="col-lg-2 d-flex align-items-center">
+                                        <label for="responsable" class="form-label">Responsable:</label>
+                                    </div>
+                                    <div class="col-lg-9 ms-auto">
+                                        <select id="responsable" class="form-select" aria-label="Default select example">
+                                            <option value="1">Seleccione...</option>
+                                            <option value="2">Juan Pérez</option>
+                                            <option value="3">Ana Gómez</option>
+                                        </select>
+                                    </div>
+                                <p class="error invalid-feedback" id="error-responsable" style="color: red;"></p>
+                            </div>
+                            <div class="tarea row mb-3">
+                                    <div class="col-lg-2 d-flex align-items-center">
+                                        <label for="refacciones" class="form-label">Refacciones:</label>
+                                    </div>
+                                    <div class="col-lg-9 ms-auto">
+                                        <select id="refacciones" class="form-select" aria-label="Default select example">
+                                            <option value="1">Seleccione...</option>
+                                            <option value="2">Bujías</option>
+                                            <option value="3">Bomba hidráulica</option>
+                                        </select>
+                                    </div>
+                                <p class="error invalid-feedback" id="error-refacciones" style="color: red;"></p>
+                            </div>
+                            <div class="tarea form-floating mb-3">
                                 <input type="text" id="descripción" class="form-control no-arrows" placeholder="Descripción">
                                 <label for="descripción">Descripción</label>
                                 <p class="error invalid-feedback" id="error-descripcion" style="color: red;"></p>
+                            </div>
+                            <div class="btn-wrapper d-flex justify-content-end align-items-end mt-4">
+                                <button id="btn_add" type="button" class="btn">Agregar</button>
                             </div>
                         </form>
                     </div>

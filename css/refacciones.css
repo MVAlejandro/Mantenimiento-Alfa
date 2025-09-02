@@ -45,6 +45,18 @@ main {
     margin: 0;
 }
 
+/* Botón formulario */
+.btn {
+    border: 1px solid #8FC74A !important;
+    color: white !important;
+    background-color: #8FC74A !important;
+    transition: all 0.2s ease;
+}
+.btn:hover {
+    background-color: #6c9639 !important;
+    color: white !important;
+}
+
 
 /*--- FOOTER ---*/
 #site_footer {

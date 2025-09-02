@@ -33,21 +33,40 @@
                         </div>
                         <p><strong>Ingrese los datos de la refaccion que desea agregar:</strong></p>
                         <!-- Formulario -->
-                        <form class="text-end">
-                            <div class="unidad form-floating mb-3">
+                        <form>
+                            <div class="refaccion form-floating col-3 ms-auto mb-3">
+                                <input type="text" id="id_r" class="form-control" placeholder="ID">
+                                <label for="id_r">ID</label>
+                                <p class="error invalid-feedback" id="error-id" style="color: red;"></p>
+                            </div>
+                            <div class="refaccion form-floating mb-3">
                                 <input type="text" id="nombre_u" class="form-control" placeholder="Nombre">
                                 <label for="nombre_u">Nombre</label>
                                 <p class="error invalid-feedback" id="error-nombre" style="color: red;"></p>
                             </div>
-                            <div class="unidad form-floating mb-3">
-                                <input type="number" id="costo" class="form-control no-arrows" placeholder="Modelo">
-                                <label for="costo">Costo</label>
-                                <p class="error invalid-feedback" id="error-costo" style="color: red;"></p>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="refaccion form-floating mb-3">
+                                        <input type="number" id="costo" class="form-control no-arrows" placeholder="Costo">
+                                        <label for="costo">Costo</label>
+                                        <p class="error invalid-feedback" id="error-costo" style="color: red;"></p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="refaccion form-floating mb-3">
+                                        <input type="text" id="refaccion_med" class="form-control" placeholder="Unidad de medida">
+                                        <label for="refaccion_med">Unidad de medida</label>
+                                        <p class="error invalid-feedback" id="error-refaccion_med" style="color: red;"></p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="unidad form-floating mb-3">
-                                <input type="text" id="unidad_med" class="form-control" placeholder="Año">
-                                <label for="unidad_med">Unidad de medida</label>
-                                <p class="error invalid-feedback" id="error-unidad_med" style="color: red;"></p>
+                            <div class="refaccion form-floating mb-3">
+                                <input type="text" id="descripción" class="form-control" placeholder="Descripción">
+                                <label for="descripción">Descripción</label>
+                                <p class="error invalid-feedback" id="error-descripción" style="color: red;"></p>
+                            </div>
+                            <div class="btn-wrapper d-flex justify-content-end align-items-end mt-4">
+                                <button id="btn_add" type="button" class="btn">Agregar</button>
                             </div>
                         </form>
                     </div>

@@ -33,21 +33,50 @@
                         </div>
                         <p><strong>Ingrese los datos del usuario que desea agregar:</strong></p>
                         <!-- Formulario -->
-                        <form class="text-end">
-                            <div class="unidad form-floating mb-3">
+                        <form>
+                            <div class="proveedor form-floating col-3 ms-auto mb-3">
+                                <input type="text" id="id_p" class="form-control" placeholder="ID">
+                                <label for="id_p">ID</label>
+                                <p class="error invalid-feedback" id="error-id" style="color: red;"></p>
+                            </div>
+                            <div class="proveedor form-floating mb-3">
                                 <input type="text" id="nombre_p" class="form-control" placeholder="Nombre">
                                 <label for="nombre_p">Nombre</label>
                                 <p class="error invalid-feedback" id="error-nombre" style="color: red;"></p>
                             </div>
-                            <div class="unidad form-floating mb-3">
-                                <input type="text" id="puesto" class="form-control" placeholder="Modelo">
-                                <label for="puesto">Puesto</label>
-                                <p class="error invalid-feedback" id="error-puesto" style="color: red;"></p>
+                            <div class="proveedor form-floating mb-3">
+                                <input type="text" id="empresa" class="form-control" placeholder="Empresa">
+                                <label for="empresa">Empresa</label>
+                                <p class="error invalid-feedback" id="error-empresa" style="color: red;"></p>
                             </div>
-                            <div class="unidad form-floating mb-3">
-                                <input type="text" id="año" class="form-control" placeholder="Año">
-                                <label for="año">Origen</label>
-                                <p class="error invalid-feedback" id="error-año" style="color: red;"></p>
+                            <div class="proveedor form-floating mb-3">
+                                <input type="text" id="dirección" class="form-control" placeholder="Dirección">
+                                <label for="dirección">Dirección</label>
+                                <p class="error invalid-feedback" id="error-dirección" style="color: red;"></p>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="proveedor form-floating mb-3">
+                                        <input type="number" id="telefono" class="form-control no-arrows" placeholder="Teléfono">
+                                        <label for="telefono">Teléfono</label>
+                                        <p class="error invalid-feedback" id="error-telefono" style="color: red;"></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="proveedor form-floating mb-3">
+                                        <input type="email" id="email" class="form-control" placeholder="Email">
+                                        <label for="email">Email</label>
+                                        <p class="error invalid-feedback" id="error-email" style="color: red;"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="proveedor form-floating mb-3">
+                                <input type="text" id="descripción" class="form-control" placeholder="Descripción">
+                                <label for="descripción">Descripción</label>
+                                <p class="error invalid-feedback" id="error-descripción" style="color: red;"></p>
+                            </div>
+                            <div class="btn-wrapper d-flex justify-content-end align-items-end mt-4">
+                                <button id="btn_add" type="button" class="btn">Agregar</button>
                             </div>
                         </form>
                     </div>
