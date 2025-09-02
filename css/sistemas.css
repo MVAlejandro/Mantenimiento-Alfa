@@ -13,8 +13,7 @@ main {
 
 /*--- CONTENIDO PRINCIPAL ---*/
 /* Recuadro del formulario */
-.card {
-    /* color: white !important; */
+#formulario {
     background-color: #00000033 !important;
     backdrop-filter: blur(3px) !important;
     border: 1px solid white !important;
@@ -49,6 +48,12 @@ main {
 .btn:hover {
     background-color: #6c9639 !important;
     color: white !important;
+}
+
+@media (max-width: 430px) {
+    .info {
+        font-size: small;
+    }
 }
 
 

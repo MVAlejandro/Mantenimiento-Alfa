@@ -13,8 +13,7 @@ main {
 
 /*--- CONTENIDO PRINCIPAL ---*/
 /* Recuadro del formulario */
-.card {
-    /* color: white !important; */
+#formulario {
     background-color: #00000033 !important;
     backdrop-filter: blur(3px) !important;
     border: 1px solid white !important;
@@ -55,11 +54,18 @@ main {
 }
 
 /* Media queries */
-@media (max-width: 768px) {
-  .form-label {
-    padding: 0 !important;
-  }
+@media (max-width: 1024px) {
+    .form-label {
+        padding: 0 !important;
+    }
 }
+
+@media (max-width: 430px) {
+    .info {
+        font-size: small;
+    }
+}
+
 
 /*--- FOOTER ---*/
 #site_footer {

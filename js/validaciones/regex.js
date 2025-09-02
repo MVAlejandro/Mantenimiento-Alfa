@@ -5,6 +5,7 @@ const textoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,-]+$/; // Expresión 
 const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+$/; // Expresión regular para el email
 const TelefonoRegex = /^[1-9]\d{9}$/; // Expresión regular para el número telefónico
 const añoRegex = /^\d{4}$/ // Expresión regular para el año
+const costoRegex = /^\d+(\.\d{1,2})?$/ // Expresión regular para los costos
 
 // Función que valida que los id sean correctos
 export function validarId(data, error) {
@@ -99,5 +100,18 @@ export function validarAño (año, error){
         error.textContent = '';
         año.classList.remove('is-invalid');
         año.classList.add('is-valid');
+    }
+}
+
+// Función que valida que el costo sea válido
+export function validarCosto (costo, error){
+    if(!costoRegex.test(costo.value)){
+        error.textContent=`* El costo no es válido`;
+        costo.classList.add('is-invalid');
+        costo.classList.remove('is-valid');
+    } else {
+        error.textContent = '';
+        costo.classList.remove('is-invalid');
+        costo.classList.add('is-valid');
     }
 }

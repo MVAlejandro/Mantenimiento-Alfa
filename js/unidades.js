@@ -14,28 +14,28 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     const modelo = document.getElementById('modelo').value;
     const anio = document.getElementById('año').value;
     const descripcion = document.getElementById('descripcion').value;
-    const id_encargado = document.getElementById('responsable').value;
+    const id_encargado = document.getElementById('encargado').value;
 
     const id_unidadIn = document.getElementById('id_u');
     const nombreIn = document.getElementById('nombre_u');
     const modeloIn = document.getElementById('modelo');
     const anioIn = document.getElementById('año');
     const descripcionIn = document.getElementById('descripcion');
-    const id_encargadoIn = document.getElementById('responsable');
+    const id_encargadoIn = document.getElementById('encargado');
 
     const error_id = document.getElementById('error-id');
     const error_nombre = document.getElementById('error-nombre');
     const error_modelo = document.getElementById('error-modelo');
     const error_año = document.getElementById('error-año');
     const error_descripcion = document.getElementById('error-descripcion');
-    const error_responsable = document.getElementById('error-responsable');
+    const error_encargado = document.getElementById('error-encargado');
 
     validarId(id_unidadIn, error_id);
     validarText(nombreIn, error_nombre);
     validarText(modeloIn, error_modelo);
     validarAño(anioIn, error_año);
     validarText(descripcionIn, error_descripcion);
-    validarSelect(id_encargadoIn, error_responsable)
+    validarSelect(id_encargadoIn, error_encargado)
 
     if (!id_unidad || !nombre || !modelo || !anio || !descripcion || !id_encargado) {
         alert('Por favor, complete todos los campos para agregar la entrada.');
@@ -49,7 +49,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
         return;
     }
 
-    const nuevaUnidad = { id_unidad, nombre, modelo, anio, descripcion, id_encargado };
+    const nuevaUnidad = {id_unidad, nombre, modelo, anio, descripcion, id_encargado};
 
     // Obtener unidades del localStorage o inicializar arreglo
     let unidades = JSON.parse(localStorage.getItem('unidades')) || [];
@@ -80,15 +80,26 @@ function abrirDetalles() {
         const unidadHTML = 
         `<div class="card mb-3">
             <div class="card-header">
-                <strong>Unidad #${index + 1}</strong>
+                <div class="row">
+                    <div class="col-6">
+                        <strong>ID:</strong> ${unidad.id_unidad}
+                    </div>
+                    <div class="col-6 text-end">
+                        <p class="info"><strong>ID Encargado:</strong> ${unidad.id_encargado}</p>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
-                <p><strong>ID:</strong> ${unidad.id_unidad}</p>
-                <p><strong>Nombre:</strong> ${unidad.nombre}</p>
-                <p><strong>Modelo:</strong> ${unidad.modelo}</p>
-                <p><strong>Año:</strong> ${unidad.anio}</p>
-                <p><strong>Descripción:</strong> ${unidad.descripcion}</p>
-                <p><strong>ID Encargado:</strong> ${unidad.id_encargado}</p>
+                <p class="info"><strong>Nombre:</strong> ${unidad.nombre}</p>
+                <div class="row">
+                    <div class="col-6">
+                        <p class="info"><strong>Modelo:</strong> ${unidad.modelo}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="info"><strong>Año:</strong> ${unidad.anio}</p>
+                    </div>
+                </div>
+                <p class="info"><strong>Descripción:</strong> ${unidad.descripcion}</p>
             </div>
         </div>`;
         desglose.innerHTML += unidadHTML;
@@ -98,4 +109,3 @@ function abrirDetalles() {
 document.addEventListener('DOMContentLoaded', () => {
     abrirDetalles();
 });
-
