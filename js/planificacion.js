@@ -16,7 +16,8 @@ if (tareasStorage.length > 0) {
             sistema: tarea.id_sistema,
             responsable: tarea.id_proveedor,
             periodicidad: tarea.id_periodicidad,
-            refacciones: tarea.id_refaccion
+            refacciones: tarea.id_refaccion,
+            progress: 100
         };
     });
 }
@@ -27,9 +28,9 @@ let calendar;
 document.addEventListener('DOMContentLoaded', function() {
     // Establecer calendario como activo inicialmente
     setTimeout(() => {
-        const calendarTab = document.querySelector('.tab[data-view="calendar-view"]');
+        const calendarTab = document.querySelector('.tab[data-view="calendario-view"]');
         const ganttTab = document.querySelector('.tab[data-view="gantt-view"]');
-        const calendarView = document.getElementById('calendar-view');
+        const calendarView = document.getElementById('calendario-view');
         const ganttView = document.getElementById('gantt-view');
         
         if (calendarTab && ganttTab && calendarView && ganttView) {
@@ -42,14 +43,14 @@ document.addEventListener('DOMContentLoaded', function() {
             calendarView.classList.add('active');
         }
     }, 100);
-    
-    initGanttChart();
-    initFullCalendar();
-    setupTabNavigation();
+
+    generarGantt();
+    generarCalendario();
+    navegacionTabs();
 });
 
 // Configurar la navegación por pestañas
-function setupTabNavigation() {
+function navegacionTabs() {
     const tabs = document.querySelectorAll('.tab');
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -63,7 +64,7 @@ function setupTabNavigation() {
             document.getElementById(viewId).classList.add('active');
             
             // Redimensionar el calendario cuando se muestra
-            if (viewId === 'calendar-view') {
+            if (viewId === 'calendario-view') {
                 setTimeout(() => {
                     calendar.updateSize();
                 }, 100);
@@ -72,63 +73,23 @@ function setupTabNavigation() {
             if (viewId === 'gantt-view') {
                 setTimeout(() => {
                     ganttChart.change_view_mode('Day');
-                    disableGanttInteractions();
                 }, 100);
             }
         });
     });
 }
 
-// Inicializar el diagrama de Gantt
-function initGanttChart() {
+// Inicializar Gantt con control total del popup
+function generarGantt() {
     const ganttContainer = document.getElementById('gantt-container');
     ganttChart = new Gantt(ganttContainer, tasks, {
-        on_click: function(task) {
-            showTaskDetails(task);
-        },
-        on_date_change: function(task, start, end) {
-            updateTaskDates(task, start, end);
-            refreshCalendar();
-        },
         view_mode: 'Day',
-        language: 'es',
-        custom_popup_html: null, // Desactiva el popup de edición
-        bar_click: function(task, e) {
-            // Evita que se muestre el popup de edición al hacer clic en una barra
-            e.preventDefault();
-            e.stopPropagation();
-        }
+        language: 'es'
     });
-    
-    // Deshabilitar la interacción de arrastre y redimensionamiento
-    disableGanttInteractions();
-}
-
-// Función para deshabilitar interacciones en el diagrama de Gantt
-function disableGanttInteractions() {
-    setTimeout(() => {
-        // Deshabilitar eventos de arrastre en todas las barras de tareas
-        const bars = document.querySelectorAll('.bar');
-        bars.forEach(bar => {
-            bar.style.pointerEvents = 'none';
-            
-            // Eliminar manejadores de redimensionamiento
-            const handles = bar.querySelectorAll('.bar-handle');
-            handles.forEach(handle => {
-                handle.style.display = 'none';
-            });
-        });
-        
-        // Deshabilitar eventos en las dependencias
-        const arrows = document.querySelectorAll('.arrow');
-        arrows.forEach(arrow => {
-            arrow.style.pointerEvents = 'none';
-        });
-    }, 500);
 }
 
 // Inicializar el calendario
-function initFullCalendar() {
+function generarCalendario() {
     const calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -136,13 +97,13 @@ function initFullCalendar() {
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,listWeek'
+            right: 'dayGridMonth,timeGridWeek,listMonth'
         },
-        events: tasksToCalendarEvents(),
+        events: tareasParaCalendario(),
         eventClick: function(info) {
             const task = tasks.find(t => t.id === info.event.id);
             if (task) {
-                showTaskDetails(task);
+                abrirModal(task);
             }
             info.jsEvent.preventDefault();
         },
@@ -155,7 +116,7 @@ function initFullCalendar() {
 }
 
 // Convertir tareas a eventos de calendario
-function tasksToCalendarEvents() {
+function tareasParaCalendario() {
     return tasks.map(task => {
         return {
             id: task.id,
@@ -168,27 +129,25 @@ function tasksToCalendarEvents() {
             responsable: task.responsable,
             periodicidad: task.periodicidad,
             refacciones: task.refacciones,
-            color: getColorForTask(task)
+            color: generarColor(task)
         };
     });
 }
 
 // Función para obtener color
-function getColorForTask(task) {
+function generarColor(task) {
     const colors = ['#28a745', '#17a2b8', '#ffc107', '#fd7e14', '#dc3545', '#6f42c1'];
     const index = task.id.charCodeAt(1) % colors.length;
     return colors[index];
 }
 
 // Cambiar modo de vista del Gantt
-function changeViewMode(mode) {
+function cambiarView(mode) {
     ganttChart.change_view_mode(mode);
-    // Deshabilitar interacciones después de cambiar la vista
-    setTimeout(disableGanttInteractions, 100);
 }
 
 // Mostrar detalles de la tarea en el modal
-function showTaskDetails(task) {
+function abrirModal(task) {
     const eventoModal = document.getElementById('evento_modal');
     
     eventoModal.innerHTML = `
@@ -233,7 +192,7 @@ function showTaskDetails(task) {
 }
 
 // Actualizar fechas de tarea
-function updateTaskDates(task, start, end) {
+function actualizarFechaTarea(task, start, end) {
     const taskIndex = tasks.findIndex(t => t.id === task.id);
     if (taskIndex !== -1) {
         tasks[taskIndex].start = start;
@@ -242,15 +201,25 @@ function updateTaskDates(task, start, end) {
 }
 
 // Actualizar el calendario
-function refreshCalendar() {
+function actualizarCalendario() {
     calendar.removeAllEvents();
-    calendar.addEventSource(tasksToCalendarEvents());
+    calendar.addEventSource(tareasParaCalendario());
 }
 
 // Formatear fecha como YYYY-MM-DD
-function formatDate(date) {
+function formatearFecha(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
+
+document.getElementById('view_dia').addEventListener('click', async function(event) {
+    cambiarView('Day')
+});
+document.getElementById('view_sem').addEventListener('click', async function(event) {
+    cambiarView('Week')
+});
+document.getElementById('view_mes').addEventListener('click', async function(event) {
+    cambiarView('Month')
+});

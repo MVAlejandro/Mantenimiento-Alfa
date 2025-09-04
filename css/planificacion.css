@@ -117,6 +117,33 @@ a {
     flex-wrap: wrap;
 }
 
+table { 
+    border-collapse: collapse; width: 100%; margin-top: 20px; 
+}
+th, td { 
+    border: 1px solid #ccc; padding: 8px; text-align: left; 
+}
+th { 
+    background: #f4f4f4; 
+}
+.acciones { 
+    margin-top: 20px; 
+}
+
+#filtros {
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+}
+
+@media print {
+    .table-responsive {
+        overflow: visible !important;
+    }
+    body { 
+        margin: 10mm; 
+    }
+}
+
 @media (max-width: 768px) {
     .fc-toolbar-title {
     font-size: 20px !important;
