@@ -124,7 +124,7 @@ function abrirDetalles() {
                         <strong>ID:</strong> ${tarea.id_tarea}
                     </div>
                     <div class="col-6 text-end">
-                        <p class="info"><strong>ID Encargado:</strong> ${tarea.id_proveedor}</p>
+                        <strong>ID Encargado:</strong> ${tarea.id_proveedor}
                     </div>
                 </div>
             </div>
