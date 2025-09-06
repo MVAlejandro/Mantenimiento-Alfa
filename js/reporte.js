@@ -37,9 +37,9 @@ function generarTabla(tareas) {
         <td>${t.nombre}</td>
         <td>${t.id_proveedor}</td>
         <td>${t.id_refaccion}</td>
-        <td>${t.id_periodicidad}</td>
+        <td >${t.id_periodicidad}</td>
         <td class="text-center"><input type="checkbox"></td>
-        <td>________________</td>
+        <td >________________</td>
       </tr>
     `;
   });

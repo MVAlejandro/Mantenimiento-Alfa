@@ -150,8 +150,8 @@ function cambiarView(mode) {
 function abrirModal(task) {
     const eventoModal = document.getElementById('evento_modal');
     
-    eventoModal.innerHTML = `
-        <div class="card mb-3">
+    eventoModal.innerHTML = 
+        `<div class="card mb-3">
             <div class="card-header">
                 <div class="row">
                     <div class="col-6">
@@ -183,8 +183,7 @@ function abrirModal(task) {
                 <p class="info"><strong>Refacciones:</strong> ${task.refacciones || 'N/A'}</p>
                 <p class="info"><strong>Descripción:</strong> ${task.description || 'N/A'}</p>
             </div>
-        </div>
-    `;
+        </div>`;
     
     // Mostrar el modal
     const modal = new bootstrap.Modal(document.getElementById('exampleModal'));

@@ -1,79 +1,49 @@
 
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
-// Importar funciones de validación de campos
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
 import {validarCamposInvalidos} from "../js/validaciones/validar_campos.js"
 import {validarText, validarId, validarCosto} from "./validaciones/regex.js"
 
-// Crear evento al dar click al botón Agregar
-document.getElementById('btn_add').addEventListener('click', async function(event) {
-    event.preventDefault();
+// Conexión a Supabase
+const supabaseUrl = "https://omsxyeiwlchkpdojzbbk.supabase.co"
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tc3h5ZWl3bGNoa3Bkb2p6YmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMDQ3MjAsImV4cCI6MjA3MjY4MDcyMH0.EAAqXwFShq-B2L02XLL28g_NqhmFH1F4mpcqhAkWWRE"
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Obtener los valores de los campos del formulario
-    const id_refaccion = document.getElementById('id_r').value;
-    const nombre = document.getElementById('nombre_r').value;
-    const costo_unitario = document.getElementById('costo').value;
-    const unidad_medida = document.getElementById('refaccion_med').value;
-    const descripcion = document.getElementById('descripcion').value;
+// Función para insertar una nueva refacción en Supabase
+async function insertarRefaccion(refaccion) {
+    const { data, error } = await supabase.from('refacciones').insert([refaccion])
 
-    const id_refaccionIn = document.getElementById('id_r');
-    const nombreIn = document.getElementById('nombre_r');
-    const costo_unitarioIn = document.getElementById('costo');
-    const unidad_medidaIn = document.getElementById('refaccion_med');
-    const descripcionIn = document.getElementById('descripcion');
+    if (error) {
+        console.error(error)
+        alert('Error al guardar la refacción: ' + error.message)
+    } else {
+        alert('Refacción agregada con éxito')
+        cargarRefacciones() // actualizar listado
+        // Limpiar formulario
+        document.querySelector('form').reset()
+    }
+}
 
-    const error_id = document.getElementById('error-id');
-    const error_nombre = document.getElementById('error-nombre');
-    const error_año = document.getElementById('error-costo');
-    const error_unidadMed = document.getElementById('error-refaccion_med');
-    const error_descripcion = document.getElementById('error-descripcion');
+// Función para cargar las refacciones desde Supabase
+async function cargarRefacciones() {
+    const { data, error } = await supabase.from('refacciones').select('*')
 
-    validarId(id_refaccionIn, error_id);
-    validarText(nombreIn, error_nombre);
-    validarCosto(costo_unitarioIn, error_año);
-    validarText(unidad_medidaIn, error_unidadMed);
-    validarText(descripcionIn, error_descripcion);
+    const desglose = document.getElementById('desglose')
+    desglose.innerHTML = ''
 
-    if (!id_refaccion || !nombre || !costo_unitario || !unidad_medida || !descripcion) {
-        alert('Por favor, complete todos los campos para agregar la entrada.');
-        return;
+    if (error) {
+        desglose.innerHTML = '<p>Error al cargar refacciones</p>'
+        console.error(error)
+        return
     }
 
-    // Validar si hay campos inválidos
-    const campos = document.querySelectorAll('input, select');
-    if (!validarCamposInvalidos(campos)) {
-        alert('Corrige los errores antes de guardar.');
-        return;
+    if (data.length === 0) {
+        desglose.innerHTML = '<p>No hay refacciones registradas.</p>'
+        return
     }
 
-    const nuevaRefaccion = {id_refaccion, nombre, costo_unitario, unidad_medida, descripcion};
-
-    // Obtener unidades del localStorage o inicializar arreglo
-    let refacciones = JSON.parse(localStorage.getItem('refacciones')) || [];
-
-    // Agregar una nueva unidad
-    refacciones.push(nuevaRefaccion);
-    // Guardar en localStorage
-    localStorage.setItem('refacciones', JSON.stringify(refacciones));
-
-    alert("Datos guardados correctamente. Refacción agregada con éxito.");
-    // Recargar
-    location.reload();
-})
-
-function abrirDetalles() {
-    // Mostrar elementos guardados
-    const desglose = document.getElementById('desglose');
-    desglose.innerHTML = '';
-
-    const refacciones = JSON.parse(localStorage.getItem('refacciones')) || [];
-
-    if (refacciones.length === 0) {
-        desglose.innerHTML = '<p>No hay refacciones registradas.</p>';
-        return;
-    }
-
-    refacciones.forEach((refaccion, index) => {
-        const refaccionHTML = 
+    data.forEach(refaccion => {
+        desglose.innerHTML +=
         `<div class="card mb-3">
             <div class="card-header">
                 <strong>ID:</strong> ${refaccion.id_refaccion}
@@ -90,11 +60,58 @@ function abrirDetalles() {
                 </div>
                 <p class="info"><strong>Descripción:</strong> ${refaccion.descripcion}</p>
             </div>
-        </div>`;
-        desglose.innerHTML += refaccionHTML;
-    });
+        </div>`
+    })
 }
 
+// Evento al dar click al botón Agregar
+document.getElementById('btn_add').addEventListener('click', async function(event) {
+    event.preventDefault()
+
+    // Obtener valores de inputs
+    const id_refaccion = document.getElementById('id_r').value;
+    const nombre = document.getElementById('nombre_r').value;
+    const costo_unitario = document.getElementById('costo').value;
+    const unidad_medida = document.getElementById('refaccion_med').value;
+    const descripcion = document.getElementById('descripcion').value;
+
+    // Referencias para validación
+    const id_refaccionIn = document.getElementById('id_r');
+    const nombreIn = document.getElementById('nombre_r');
+    const costo_unitarioIn = document.getElementById('costo');
+    const unidad_medidaIn = document.getElementById('refaccion_med');
+    const descripcionIn = document.getElementById('descripcion');
+
+    const error_id = document.getElementById('error-id');
+    const error_nombre = document.getElementById('error-nombre');
+    const error_año = document.getElementById('error-costo');
+    const error_unidadMed = document.getElementById('error-refaccion_med');
+    const error_descripcion = document.getElementById('error-descripcion');
+
+    // Validaciones
+    validarId(id_refaccionIn, error_id);
+    validarText(nombreIn, error_nombre);
+    validarCosto(costo_unitarioIn, error_año);
+    validarText(unidad_medidaIn, error_unidadMed);
+    validarText(descripcionIn, error_descripcion);
+
+    if (!id_refaccion || !nombre || !costo_unitario || !unidad_medida || !descripcion) {
+        alert('Por favor, complete todos los campos para agregar la entrada.');
+        return;
+    }
+
+    const campos = document.querySelectorAll('input, select');
+    if (!validarCamposInvalidos(campos)) {
+        alert('Corrige los errores antes de guardar.');
+        return;
+    }
+
+    // Insertar en Supabase
+    const nuevaRefaccion = {id_refaccion, nombre, costo_unitario, unidad_medida, descripcion};
+    await insertarRefaccion(nuevaRefaccion)
+})
+
+// Cargar las refacciones al iniciar la página
 document.addEventListener('DOMContentLoaded', () => {
-    abrirDetalles();
-});
+    cargarRefacciones()
+})

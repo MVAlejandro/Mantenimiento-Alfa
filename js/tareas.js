@@ -1,159 +1,164 @@
 
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
-// Importar funciones de validación de campos
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
 import {validarCamposInvalidos, validarSelect} from "../js/validaciones/validar_campos.js"
 import {validarText} from "./validaciones/regex.js"
 
-// Crear evento al dar click al botón Agregar
-document.getElementById('btn_add').addEventListener('click', async function(event) {
-    event.preventDefault();
+// Conexión a Supabase
+const supabaseUrl = "https://omsxyeiwlchkpdojzbbk.supabase.co"
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tc3h5ZWl3bGNoa3Bkb2p6YmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMDQ3MjAsImV4cCI6MjA3MjY4MDcyMH0.EAAqXwFShq-B2L02XLL28g_NqhmFH1F4mpcqhAkWWRE"
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Obtener los valores de los campos del formulario
+// Función para cargar datos en select
+async function cargarOpciones(selectId, tabla, valueKey, textKey) {
+    const select = document.getElementById(selectId)
+    if (!select) return
+
+    const { data, error } = await supabase.from(tabla).select(`${valueKey}, ${textKey}`)
+
+    select.innerHTML = '<option value="0">Seleccione...</option>'
+
+    if (error) {
+        console.error(`Error cargando ${tabla}:`, error)
+        return
+    }
+
+    data.forEach(item => {
+        const option = document.createElement('option')
+        option.value = item[valueKey]
+        option.textContent = item[textKey]
+        select.appendChild(option)
+    })
+}
+
+// Función para insertar una nueva tarea en Supabase
+async function insertarTarea(tarea) {
+    const { data, error } = await supabase.from('tareas').insert([tarea])
+
+    if (error) {
+        console.error(error)
+        alert('Error al guardar la tarea: ' + error.message)
+    } else {
+        alert('Tarea agregada con éxito')
+        cargarTareas() // actualizar listado
+        // Limpiar formulario
+        document.querySelector('form').reset()
+    }
+}
+
+// Función para cargar las tareas desde Supabase
+async function cargarTareas() {
+    const desglose = document.getElementById("desglose");
+    desglose.innerHTML = "";
+
+    // Traer tareas con joins para mostrar nombres en lugar de IDs
+    const { data, error } = await supabase
+        .from("tareas")
+        .select(`
+            id_tarea,
+            nombre,
+            descripcion,
+            unidades ( nombre ),
+            sistemas ( tipo ),
+            periodicidad ( nombre )
+        `);
+
+    if (error) {
+        console.error("Error al cargar tareas:", error);
+        desglose.innerHTML = "<p>Error al cargar las tareas.</p>";
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        desglose.innerHTML = "<p>No hay tareas registradas.</p>";
+        return;
+    }
+
+    data.forEach(tarea => {
+        const tareaHTML = `
+        <div class="card mb-3">
+            <div class="card-header">
+                <strong>ID:</strong> ${tarea.id_tarea}
+            </div>
+            <div class="card-body">
+                <p class="info"><strong>Nombre:</strong> ${tarea.nombre}</p>
+                <div class="row">
+                    <div class="col-6">
+                        <p class="info"><strong>Unidad:</strong> ${tarea.unidades?.nombre || "Sin unidad"}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="info"><strong>Sistema:</strong> ${tarea.sistemas?.tipo || "Sin sistema"}</p>
+                    </div>
+                </div>
+                <p class="info"><strong>Periodicidad:</strong> ${tarea.periodicidad?.nombre || "Sin periodicidad"}</p>
+                <p class="info"><strong>Descripción:</strong> ${tarea.descripcion}</p>
+                <div class="btn-wrapper d-flex justify-content-end align-items-end mt-4">
+                    <button id="#" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#asignacion_modal" data-idtarea="${tarea.id_tarea}">Asignar tarea</button>
+                </div>
+            </div>
+        </div>`;
+        desglose.innerHTML += tareaHTML;
+
+        // Abrir modal y pasar el id_tarea
+        const asignacionModal = document.getElementById('asignacion_modal');
+        asignacionModal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget; // botón que abrió el modal
+            const idTarea = button.getAttribute('data-idtarea');
+            asignacionModal.dataset.idTarea = idTarea; // guardar temporalmente
+        });
+    });
+}
+
+// Evento al dar click al botón Agregar
+document.getElementById('btn_add').addEventListener('click', async function(event) {
+    event.preventDefault()
+
+    // Obtener valores de inputs
     const nombre = document.getElementById('nombre_t').value;
     const id_unidad = document.getElementById('unidad').value;
     const id_sistema = document.getElementById('sistema').value;
-    const fecha_programada = document.getElementById('fecha').value;
     const id_periodicidad = document.getElementById('periodicidad').value;
-    const id_proveedor = document.getElementById('responsable').value;
-    const id_refaccion = document.getElementById('refacciones').value;
     const descripcion = document.getElementById('descripcion').value;
 
+    // Referencias para validación
     const nombreIn = document.getElementById('nombre_t');
     const id_unidadIn = document.getElementById('unidad');
     const id_sistemaIn = document.getElementById('sistema');
-    const fecha_programadaIn = document.getElementById('fecha');
     const id_periodicidadIn = document.getElementById('periodicidad');
-    const id_proveedorIn = document.getElementById('responsable');
-    const id_refaccionIn = document.getElementById('refacciones');
     const descripcionIn = document.getElementById('descripcion');
 
     const error_nombre = document.getElementById('error-nombre');
     const error_unidad = document.getElementById('error-unidad');
     const error_sistema = document.getElementById('error-sistema');
-    const error_fecha = document.getElementById('error-fecha');
     const error_periodicidad = document.getElementById('error-periodicidad');
-    const error_proveedor = document.getElementById('error-responsable');
-    const error_refaccion = document.getElementById('error-refacciones');
     const error_descripcion = document.getElementById('error-descripcion');
-    
 
+    // Validaciones
     validarText(nombreIn, error_nombre);
     validarSelect(id_unidadIn, error_unidad)
     validarSelect(id_sistemaIn, error_sistema)
-    validarText(id_periodicidadIn, error_periodicidad);
-    validarSelect(id_proveedorIn, error_proveedor)
-    validarSelect(id_refaccionIn, error_refaccion)
+    validarSelect(id_periodicidadIn, error_periodicidad)
     validarText(descripcionIn, error_descripcion);
 
-    if (!nombre || !id_unidad || !id_sistema || !id_periodicidad || !id_proveedor || !id_refaccion || !descripcion) {
+    if (!nombre || !id_unidad || !id_sistema || !id_periodicidad || !descripcion) {
         alert('Por favor, complete todos los campos para agregar la entrada.');
         return;
     }
 
-    // Validar si hay campos inválidos
     const campos = document.querySelectorAll('input, select');
     if (!validarCamposInvalidos(campos)) {
         alert('Corrige los errores antes de guardar.');
         return;
     }
 
-    const nuevaTarea = {nombre, id_unidad, id_sistema, fecha_programada, id_periodicidad, id_proveedor, id_refaccion, descripcion};
-
-    // Obtener unidades del localStorage o inicializar arreglo
-    let tareas = JSON.parse(localStorage.getItem('tareas')) || [];
-
-    // Agregar una nueva unidad
-    tareas.push(nuevaTarea);
-    // Guardar en localStorage
-    localStorage.setItem('tareas', JSON.stringify(tareas));
-
-    alert("Datos guardados correctamente. Tarea agregada con éxito.");
-    // Recargar
-    location.reload();
+    // Insertar en Supabase
+    const nuevaTarea = {nombre, id_unidad, id_sistema, id_periodicidad, descripcion};
+    await insertarTarea(nuevaTarea)
 })
 
-
-// Función para generar opciones del select en base a localStorage
-function opcinesSelect(selectId, storageKey, valueKey, textKey) {
-    const select = document.getElementById(selectId);
-
-    if (!select) {
-        console.warn(`No se encontró el elemento <select> con id "${selectId}"`);
-        return;
-    }
-
-    const dataJSON = localStorage.getItem(storageKey);
-
-    const items = JSON.parse(dataJSON);
-
-    // Agregar las opciones
-    items.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item[valueKey];
-        option.textContent = item[textKey];
-        select.appendChild(option);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    opcinesSelect('unidad', 'unidades', 'id_unidad', 'nombre');
-    opcinesSelect('sistema', 'sistemas', 'tipo', 'tipo');
-    opcinesSelect('responsable', 'proveedores', 'id_proveedor', 'nombre');
-    opcinesSelect('refacciones', 'refacciones', 'id_refaccion', 'nombre');
-});
-
-
-// Función para mostrar elementos guardados
-function abrirDetalles() {
-    const desglose = document.getElementById('desglose');
-    desglose.innerHTML = '';
-
-    const tareas = JSON.parse(localStorage.getItem('tareas')) || [];
-
-    if (tareas.length === 0) {
-        desglose.innerHTML = '<p>No hay tareas registradas.</p>';
-        return;
-    }
-
-    tareas.forEach((tarea, index) => {
-        const tareaHTML = 
-        `<div class="card mb-3">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-6">
-                        <strong>ID:</strong> ${tarea.id_tarea}
-                    </div>
-                    <div class="col-6 text-end">
-                        <strong>ID Encargado:</strong> ${tarea.id_proveedor}
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <p class="info"><strong>Nombre:</strong> ${tarea.nombre}</p>
-                <div class="row">
-                    <div class="col-6">
-                        <p class="info"><strong>Periodicidad:</strong> ${tarea.id_periodicidad}</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="info"><strong>Fecha programada:</strong> ${tarea.fecha_programada}</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">
-                        <p class="info"><strong>Unidad:</strong> ${tarea.id_unidad}</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="info"><strong>Sistema:</strong> ${tarea.id_sistema}</p>
-                    </div>
-                </div>
-                <p class="info"><strong>Refacciones:</strong> ${tarea.id_refaccion}</p>
-                <p class="info"><strong>Descripción:</strong> ${tarea.descripcion}</p>
-            </div>
-        </div>`;
-        desglose.innerHTML += tareaHTML;
-    });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    abrirDetalles();
-});
+    cargarOpciones('unidad', 'unidades', 'id_unidad', 'nombre')
+    cargarOpciones('sistema', 'sistemas', 'id_sistema', 'tipo')
+    cargarOpciones('periodicidad', 'periodicidad', 'id_periodicidad', 'nombre')
+    cargarTareas()
+})
