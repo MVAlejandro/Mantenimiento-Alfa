@@ -29,22 +29,22 @@ function crearHeader(){
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
                 <ul class="navbar-nav">
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link" style="color: white;" href="../unidades.html">Unidades</a>
+                        <a class="nav-link nav-prin" href="../unidades.html">Unidades</a>
                     </li>
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link" style="color: white;" href="../sistemas.html">Sistemas</a>
+                        <a class="nav-link nav-prin" href="../sistemas.html">Sistemas</a>
                     </li>
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link" style="color: white;" href="../refacciones.html">Refacciones</a>
+                        <a class="nav-link nav-prin" href="../refacciones.html">Refacciones</a>
                     </li>
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link" style="color: white;" href="../proveedores.html">Proveedores</a>
+                        <a class="nav-link nav-prin" href="../proveedores.html">Proveedores</a>
                     </li>
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link" style="color: white;" href="../tareas.html">Tareas</a>
+                        <a class="nav-link nav-prin" href="../tareas.html">Tareas</a>
                     </li>
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link" style="color: white;" href="../planificacion.html">Planificación</a>
+                        <a class="nav-link nav-prin" href="../planificacion.html">Planificación</a>
                     </li>
                 </ul>
                 </div>

@@ -1,6 +1,6 @@
 
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
 import {validarCamposInvalidos, validarSelect} from "../js/validaciones/validar_campos.js"
 import {validarText} from "./validaciones/regex.js"
 
@@ -58,9 +58,9 @@ async function cargarTareas() {
             id_tarea,
             nombre,
             descripcion,
-            unidades ( nombre ),
-            sistemas ( tipo ),
-            periodicidad ( nombre )
+            unidades (nombre),
+            sistemas (tipo),
+            periodicidad (nombre)
         `);
 
     if (error) {
@@ -106,6 +106,28 @@ async function cargarTareas() {
             const idTarea = button.getAttribute('data-idtarea');
             asignacionModal.dataset.idTarea = idTarea; // guardar temporalmente
         });
+    });
+}
+
+// Cargar proveedores para mostrar en modal
+async function cargarProveedores() {
+    const { data: proveedores, error } = await supabase
+        .from('proveedores')
+        .select('id_proveedor, nombre');
+
+    const select = document.getElementById('responsable');
+    select.innerHTML = '<option value="0">Seleccione...</option>';
+
+    if (error) {
+        console.error('Error al cargar proveedores:', error);
+        return;
+    }
+
+    proveedores.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.id_proveedor;
+        option.textContent = p.nombre;
+        select.appendChild(option);
     });
 }
 
@@ -156,9 +178,56 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     await insertarTarea(nuevaTarea)
 })
 
+// Evento al dar click al botón Asignar
+document.getElementById('btn_asignar').addEventListener('click', async () => {
+    const asignacionModal = document.getElementById('asignacion_modal');
+    const idTarea = asignacionModal.dataset.idTarea;
+
+    const proveedor = document.getElementById('responsable').value;
+    const fechaProgramada = document.getElementById('fecha_programada').value;
+
+    if (!proveedor || proveedor === "0") {
+        alert('Seleccione un responsable.');
+        return;
+    }
+
+    if (!fechaProgramada) {
+        alert('Ingrese una fecha programada.');
+        return;
+    }
+
+    // Insertar en tarea_proveedor
+    const { error: errorTP } = await supabase
+        .from('tarea_proveedor')
+        .insert([{ id_tarea: idTarea, id_proveedor: proveedor }]);
+
+    if (errorTP) {
+        console.error('Error al insertar en tarea_proveedor:', errorTP);
+        alert('No se pudo asignar la tarea.');
+        return;
+    }
+
+    // Insertar en calendario con estado Pendiente
+    const { error: errorCal } = await supabase
+        .from('calendario')
+        .insert([{ id_tarea: idTarea, fecha_programada: fechaProgramada }]);
+
+    if (errorCal) {
+        console.error('Error al insertar en calendario:', errorCal);
+        alert('No se pudo registrar la fecha en el calendario.');
+        return;
+    }
+
+    alert('Tarea asignada correctamente.');
+    const modalInstance = bootstrap.Modal.getInstance(asignacionModal);
+    modalInstance.hide();
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     cargarOpciones('unidad', 'unidades', 'id_unidad', 'nombre')
     cargarOpciones('sistema', 'sistemas', 'id_sistema', 'tipo')
     cargarOpciones('periodicidad', 'periodicidad', 'id_periodicidad', 'nombre')
+    cargarProveedores()
     cargarTareas()
+    
 })

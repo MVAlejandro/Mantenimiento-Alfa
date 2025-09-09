@@ -14,25 +14,28 @@
 #nav_logo {
     padding: 10px;   
 }
-.nav-link.active {
+.nav-prin {
+    color:white !important;
+}
+.nav-prin.active {
     color: #8FC74A !important;
     font-weight: bold;
 }
-.nav-link.active::after {
+.nav-prin.active::after {
     width: 100%;
 }
 
 @media (min-width: 992px){
 
-    .nav-link {
+    .nav-prin {
         position: relative;
         color: #000; 
         transition: color 0.3s ease;
     }
-    .nav-link:hover {
+    .nav-prin:hover {
         color: #8FC74A; 
     }
-    .nav-link::after {
+    .nav-prin::after {
         content: "";
         display: block;
         width: 0;
@@ -43,7 +46,7 @@
         bottom: -5px;
         left: 0;
     }
-    .nav-link:hover::after {
+    .nav-prin:hover::after {
         width: 100%; 
     }
 }
