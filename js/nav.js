@@ -1,4 +1,7 @@
 
+// IMPORTACIÓN DE FUNCIONES EXTERNAS
+import supabase from './supabase/supabase-client.js'
+
 const header = document.getElementById("site_header");
 const footer = document.getElementById("site_footer");
 const bar = document.getElementById("top_bar");
@@ -16,12 +19,26 @@ window.addEventListener("load", function(event){
             item.classList.add('active');
         }
     });
-
-    document.getElementById('btn_logout').addEventListener('click', function() {
-        localStorage.clear();
-        window.location.href = './login.html';
-    });
 });
+
+// Función para cerrar sesión con Supabase
+async function cerrarSesion() {
+    try {
+        // Cerrar sesión en Supabase
+        const { error } = await supabase.auth.signOut();
+        
+        if (error) {
+            console.error('Error al cerrar sesión:', error);
+        }
+        
+        // Redirigir al login
+        window.location.href = './login.html';
+        
+    } catch (error) {
+        console.error('Error inesperado al cerrar sesión:', error);
+        window.location.href = './login.html';
+    }
+}
 
 function crearBarra(){
     bar.insertAdjacentHTML("beforeend",
@@ -29,13 +46,16 @@ function crearBarra(){
             <button id="btn_logout" class="btn">Salir</button>
         </div>`
     );
+    
+    // Agregar el cierre de sesión al botón
+    document.getElementById('btn_logout').addEventListener('click', cerrarSesion);
 }
 
 function crearHeader(){
     const currentLocation = window.location.href;
     let logoHref = "./mantenimiento.html"; // Valor por defecto
 
-    // Si estamos en la página login.html, cambia el enlace del logo
+    // Si la ubicación actual es login.html, cambia el enlace del logo
     if (currentLocation.includes("login.html")) {
         logoHref = 'https://palletsalfatexcoco.com.mx/inicio/';
     }
