@@ -88,7 +88,7 @@ async function cargarTareas() {
                 <p class="info"><strong>Periodicidad:</strong> ${tarea.periodicidad?.nombre || "Sin periodicidad"}</p>
                 <p class="info"><strong>Descripción:</strong> ${tarea.descripcion}</p>
                 <div class="btn-wrapper d-flex justify-content-end align-items-end mt-4">
-                    <button id="#" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#asignacion_modal" data-idtarea="${tarea.id_tarea}">Asignar tarea</button>
+                    <button id="#" type="button" class="btn btn-modal" data-bs-toggle="modal" data-bs-target="#asignacion_modal" data-idtarea="${tarea.id_tarea}">Asignar tarea</button>
                 </div>
             </div>
         </div>`;

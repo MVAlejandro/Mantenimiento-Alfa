@@ -1,26 +1,49 @@
 
-const header = document.getElementById("site_header")
-const footer = document.getElementById("site_footer")
+const header = document.getElementById("site_header");
+const footer = document.getElementById("site_footer");
+const bar = document.getElementById("top_bar");
 
 window.addEventListener("load", function(event){
+    crearBarra();
     crearHeader();
     crearFooter();
 
     const currentLocation = window.location.href;
     const menuItems = document.querySelectorAll('.nav-link');
         
-        menuItems.forEach(item => {
-            if (item.href === currentLocation) {
-                item.classList.add('active');
-            }
-        });
+    menuItems.forEach(item => {
+        if (item.href === currentLocation) {
+            item.classList.add('active');
+        }
     });
 
+    document.getElementById('btn_logout').addEventListener('click', function() {
+        localStorage.clear();
+        window.location.href = './login.html';
+    });
+});
+
+function crearBarra(){
+    bar.insertAdjacentHTML("beforeend",
+        `<div class="cerrar_sesion d-flex align-items-center">
+            <button id="btn_logout" class="btn">Salir</button>
+        </div>`
+    );
+}
+
 function crearHeader(){
+    const currentLocation = window.location.href;
+    let logoHref = "./mantenimiento.html"; // Valor por defecto
+
+    // Si estamos en la página login.html, cambia el enlace del logo
+    if (currentLocation.includes("login.html")) {
+        logoHref = 'https://palletsalfatexcoco.com.mx/inicio/';
+    }
+
     header.insertAdjacentHTML("afterbegin",
         `<nav id="nav_principal" class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a id="nav_logo" class="navbar-brand" href="../mantenimiento.html">
+                <a id="nav_logo" class="navbar-brand" href="${logoHref}">
                     <img src="./assets/Logo-Color-PNG-62x51.png" alt="Pallets Alfa logo">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,22 +52,22 @@ function crearHeader(){
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
                 <ul class="navbar-nav">
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="../unidades.html">Unidades</a>
+                        <a class="nav-link nav-prin" href="./unidades.html">Unidades</a>
                     </li>
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="../sistemas.html">Sistemas</a>
+                        <a class="nav-link nav-prin" href="./sistemas.html">Sistemas</a>
                     </li>
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="../refacciones.html">Refacciones</a>
+                        <a class="nav-link nav-prin" href="./refacciones.html">Refacciones</a>
                     </li>
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="../proveedores.html">Proveedores</a>
+                        <a class="nav-link nav-prin" href="./proveedores.html">Proveedores</a>
                     </li>
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="../tareas.html">Tareas</a>
+                        <a class="nav-link nav-prin" href="./tareas.html">Tareas</a>
                     </li>
                     <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="../planificacion.html">Planificación</a>
+                        <a class="nav-link nav-prin" href="./planificacion.html">Planificación</a>
                     </li>
                 </ul>
                 </div>
@@ -58,8 +81,8 @@ function crearFooter(){
         `<div class="container">
             <hr>
             <div class="row align-items-center">
-                <div id="iso_footer" class="col text-start">
-                    <img src="./assets/iso-9001-150x46.png" alt="ISO 9001" width="120px">
+                <div id="img_footer" class="col text-start">
+                    
                 </div>
                 <div id="texto_footer" class="col text-end">
                     <p>Pallets Alfa Texcoco</p>

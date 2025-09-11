@@ -30,7 +30,7 @@ async function cargarTareas() {
         .from('tareas')
         .select(`
             *,
-            unidades:id_unidad(nombre),
+            unidades:id_unidad(nombre, departamento),
             sistemas:id_sistema(tipo),
             periodicidad:id_periodicidad(nombre),
             tarea_proveedor!tarea_proveedor_id_tarea_fkey (
@@ -62,6 +62,9 @@ async function cargarTareas() {
                 ? tarea.calendario[tarea.calendario.length - 1].estado
                 : 'Pendiente'; // Estado por defecto
 
+            // Obtener el departamento de la unidad
+            const departamento = tarea.unidades ? tarea.unidades.departamento : 'N/A';
+
             return {
                 id: 'T' + tarea.id_tarea,
                 name: tarea.nombre,
@@ -69,6 +72,7 @@ async function cargarTareas() {
                 end: fechaProgramada,
                 description: tarea.descripcion,
                 unidad: tarea.unidades ? tarea.unidades.nombre : 'N/A',
+                departamento: departamento,
                 sistema: tarea.sistemas ? tarea.sistemas.tipo : 'N/A',
                 responsable: proveedor,
                 periodicidad: tarea.periodicidad ? tarea.periodicidad.nombre : 'N/A',
@@ -166,6 +170,7 @@ function tareasParaCalendario() {
             end: task.end,
             description: task.description,
             unidad: task.unidad,
+            departamento: task.departamento,
             sistema: task.sistema,
             responsable: task.responsable,
             periodicidad: task.periodicidad,
@@ -220,23 +225,24 @@ function abrirModal(task) {
                 </div>
                 <div class="card-body">
                     <p class="info"><strong>Nombre:</strong> ${task.name}</p>
+                    <p class="info"><strong>Fecha programada:</strong> ${task.start}</p>
+                    <p class="info"><strong>Unidad:</strong> ${task.unidad}</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <p class="info"><strong>Sistema:</strong> ${task.sistema}</p>
+                        </div>
+                        <div class="col-6">
+                            <p class="info"><strong>Departamento:</strong> ${task.departamento}</p>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-6">
                             <p class="info"><strong>Periodicidad:</strong> ${task.periodicidad}</p>
                         </div>
                         <div class="col-6">
-                            <p class="info"><strong>Fecha programada:</strong> ${task.start}</p>
+                            <p class="info"><strong>Estado:</strong> ${task.estado}</p>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <p class="info"><strong>Unidad:</strong> ${task.unidad}</p>
-                        </div>
-                        <div class="col-6">
-                            <p class="info"><strong>Sistema:</strong> ${task.sistema}</p>
-                        </div>
-                    </div>
-                    <p class="info"><strong>Estado:</strong> ${task.estado}</p>
                 </div>
             </div>`;
         

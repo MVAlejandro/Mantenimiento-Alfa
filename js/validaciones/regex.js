@@ -13,7 +13,7 @@ export function validarId(data, error) {
     error.textContent = '';
     data.classList.remove('is-invalid', 'is-valid');
 
-    if ((data.value.length < 3) || (!textoRegex.test(data.value))) {
+    if ((data.value.length < 1) || (!textoRegex.test(data.value))) {
         error.textContent = `* ID inválido`;
         data.classList.add('is-invalid');
         return; 

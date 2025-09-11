@@ -5,9 +5,10 @@ import supabase from '../supabase/supabase-client.js'
 export async function generarGestion() {
     const inicioInput = document.getElementById('fechaInicioG').value;
     const finInput = document.getElementById('fechaFinG').value;
+    const departamentoFiltro = document.getElementById('departamentoG').value;
     
-    // Verificar si ambas fechas están vacías
-    if (!inicioInput && !finInput) {
+    // Verificar si los filtros están vacías
+    if (!inicioInput && !finInput && departamentoFiltro === '0') {
         generarTablaGestion([]);
         return;
     }
@@ -21,7 +22,7 @@ export async function generarGestion() {
             .from('tareas')
             .select(`
                 *,
-                unidades:id_unidad(nombre),
+                unidades:id_unidad(nombre, departamento),
                 tarea_proveedor!tarea_proveedor_id_tarea_fkey (
                     id_proveedor,
                     proveedores (id_proveedor, nombre)
@@ -43,14 +44,19 @@ export async function generarGestion() {
                 ? tarea.calendario[tarea.calendario.length - 1] 
                 : null;
                 
+            // Obtener proveedor de la tarea
             const proveedor = tarea.tarea_proveedor && tarea.tarea_proveedor.length > 0
                 ? tarea.tarea_proveedor[0].proveedores.nombre
                 : 'Sin asignar';
+
+            // Obtener departamento de la unidad
+            const departamento = tarea.unidades ? tarea.unidades.departamento : 'N/A';
 
             return {
                 id_tarea: tarea.id_tarea,
                 nombre: tarea.nombre,
                 id_unidad: tarea.unidades ? tarea.unidades.nombre : tarea.id_unidad,
+                departamento: departamento,
                 id_proveedor: proveedor,
                 fecha_programada: ultimoCalendario ? ultimoCalendario.fecha_programada : null,
                 estado: ultimoCalendario ? ultimoCalendario.estado : 'Pendiente'
@@ -60,13 +66,20 @@ export async function generarGestion() {
         // Filtrar por fechas si se especificaron
         let tareasFiltradas = tareasProcesadas;
         
-        if (inicioInput || finInput) {
+        if (inicioInput || finInput || departamentoFiltro !== '0') {
             tareasFiltradas = tareasProcesadas.filter(t => {
-                if (!t.fecha_programada) return false;
+                // Filtro por fechas
+                let cumpleFechas = true;
+                if (t.fecha_programada) {
+                    const fecha = new Date(t.fecha_programada);
+                    cumpleFechas = (!isNaN(inicio) ? fecha >= inicio : true) &&
+                                  (!isNaN(fin) ? fecha <= fin : true);
+                }
                 
-                const fecha = new Date(t.fecha_programada);
-                return (!isNaN(inicio) ? fecha >= inicio : true) &&
-                       (!isNaN(fin) ? fecha <= fin : true);
+                // Filtro por departamento
+                const cumpleDepartamento = departamentoFiltro === '0' || t.departamento === departamentoFiltro;
+                
+                return cumpleFechas && cumpleDepartamento;
             });
         }
 
@@ -83,7 +96,7 @@ function generarTablaGestion(tareas) {
     tbody.innerHTML = "";
 
     if (!tareas || tareas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5">No hay tareas pendientes en este rango</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6">No hay tareas pendientes en este rango</td></tr>`;
         return;
     }
 
@@ -94,8 +107,9 @@ function generarTablaGestion(tareas) {
             <th scope="row">${t.fecha_programada || 'Sin fecha'}</th>
             <td>${t.nombre}</td>
             <td>${t.id_unidad}</td>
+            <td>${t.departamento}</td>
             <td>${t.id_proveedor}</td>
-            <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#gestion_modal">Gestionar tarea</button></td>
+            <td><button type="button" class="btn btn-primary tarea-btn" data-bs-toggle="modal" data-bs-target="#gestion_modal">Gestionar tarea</button></td>
         </tr>`;
     });
 }

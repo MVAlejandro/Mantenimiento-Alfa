@@ -40,10 +40,20 @@ async function insertarUnidad(unidad) {
 
 // Función para cargar las unidades desde Supabase
 async function cargarUnidades() {
-    const { data, error } = await supabase.from('unidades').select('*')
-
     const desglose = document.getElementById('desglose')
     desglose.innerHTML = ''
+
+    const { data, error } = await supabase
+    .from('unidades')
+    .select(`
+        id_unidad,
+        nombre,
+        modelo,
+        anio,
+        departamento,
+        descripcion,
+        id_encargado (nombre)
+        `)
 
     if (error) {
         desglose.innerHTML = '<p>Error al cargar unidades</p>'
@@ -62,7 +72,7 @@ async function cargarUnidades() {
             <div class="card-header">
                 <div class="row">
                     <div class="col-6"><strong>ID:</strong> ${unidad.id_unidad}</div>
-                    <div class="col-6 text-end"><strong>ID Encargado:</strong> ${unidad.id_encargado}</div>
+                    <div class="col-6 text-end"><strong>Encargado:</strong> ${unidad.id_encargado?.nombre}</div>
                 </div>
             </div>
             <div class="card-body">
@@ -71,6 +81,7 @@ async function cargarUnidades() {
                     <div class="col-6"><p class="info"><strong>Modelo:</strong> ${unidad.modelo}</p></div>
                     <div class="col-6"><p class="info"><strong>Año:</strong> ${unidad.anio}</p></div>
                 </div>
+                <p class="info"><strong>Departamento:</strong> ${unidad.departamento}</p>
                 <p class="info"><strong>Descripción:</strong> ${unidad.descripcion}</p>
             </div>
         </div>`
@@ -86,6 +97,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     const nombre = document.getElementById('nombre_u').value
     const modelo = document.getElementById('modelo').value
     const anio = document.getElementById('año').value
+    const departamento = document.getElementById('departamento').value
     const descripcion = document.getElementById('descripcion').value
     const id_encargado = document.getElementById('encargado').value
 
@@ -94,6 +106,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     const nombreIn = document.getElementById('nombre_u')
     const modeloIn = document.getElementById('modelo')
     const anioIn = document.getElementById('año')
+    const departamentoIn = document.getElementById('departamento')
     const descripcionIn = document.getElementById('descripcion')
     const id_encargadoIn = document.getElementById('encargado')
 
@@ -101,6 +114,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     const error_nombre = document.getElementById('error-nombre')
     const error_modelo = document.getElementById('error-modelo')
     const error_año = document.getElementById('error-año')
+    const error_departamento = document.getElementById('error-departamento')
     const error_descripcion = document.getElementById('error-descripcion')
     const error_encargado = document.getElementById('error-encargado')
 
@@ -109,10 +123,11 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     validarText(nombreIn, error_nombre)
     validarText(modeloIn, error_modelo)
     validarAño(anioIn, error_año)
+    validarSelect(departamentoIn, error_departamento)
     validarText(descripcionIn, error_descripcion)
     validarSelect(id_encargadoIn, error_encargado)
 
-    if (!id_unidad || !nombre || !modelo || !anio || !descripcion || !id_encargado) {
+    if (!id_unidad || !nombre || !modelo || !anio || !departamento || !descripcion || !id_encargado) {
         alert('Por favor, complete todos los campos para agregar la entrada.')
         return
     }
@@ -124,7 +139,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     }
 
     // Insertar en Supabase
-    const nuevaUnidad = { id_unidad, nombre, modelo, anio, descripcion, id_encargado }
+    const nuevaUnidad = { id_unidad, nombre, modelo, anio, departamento, descripcion, id_encargado }
     await insertarUnidad(nuevaUnidad)
 })
 

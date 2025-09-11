@@ -5,6 +5,17 @@
     height: 38.4px;
 }
 
+#btn_logout {
+    color: white;
+    height: 35px;
+    border-radius: 4px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    text-transform: none;
+}
+
 /*--- BARRA DE NAVEGACION PRINCIPAL ---*/
 #nav_principal {
     background-color: #7B7B7B !important;
@@ -49,4 +60,16 @@
     .nav-prin:hover::after {
         width: 100%; 
     }
+}
+
+/*--- FOOTER ---*/
+#site_footer {
+    background-color: #222222;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+#texto_footer {
+    font-size: 0.9rem;
 }

@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planificación de tareas - Mantenimiento</title>
-    <link rel="stylesheet" href="./css/nav.css">
-    <link rel="stylesheet" href="./css/planificacion.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
+    <link rel="stylesheet" href="./css/nav.css">
+    <link rel="stylesheet" href="./css/planificacion.css">
     <link rel="icon" href="./assets/Logo-Color-PNG-62x51.png">
+    <script src="js/verificacion.js"></script>
 </head>
 <body>
     <!-- BARRA DE RELLENO SUPERIOR -->
     <div id="top_bar" class="d-print-none">
-        <br>
+        
     </div>
 
     <!-- BARRA DE NAVEGACION PRINCIPAL -->
@@ -85,6 +86,15 @@
                                     <label for="fechaFinS" class="form-label m-2">Fecha fin</label>
                                     <input type="date" id="fechaFinS" class="form-control" placeholder="Fecha">
                                 </div>
+                                <div class="col">
+                                    <label for="departamentoS" class="form-label m-2">Departamento</label>
+                                    <select class="form-select" id="departamentoS">
+                                        <option value="0">Todos</option>
+                                        <option value="Lógistica">Lógistica</option>
+                                        <option value="Mantenimiento">Mantenimiento</option>
+                                        <option value="Sistemas">Sistemas</option>
+                                    </select>
+                                </div>
                                 <div class="col d-flex align-items-center justify-content-end mt-2 d-print-none">
                                     <button id="btn_genS" class="btn btn-primary m-2">Generar</button>
                                     <button id="btn_printS" class="btn btn-primary">Imprimir</button>
@@ -92,12 +102,13 @@
                             </div>
                             <!-- Tabla -->
                             <div class="table-responsive">
-                                <table id="super_tabla" class="table table-bordered table-hover">
+                                <table id="super_tabla" class="table table-bordered table-hover ">
                                     <thead>
                                         <tr>
                                             <th>Fecha</th>
                                             <th>Tarea</th>
                                             <th>Unidad</th>
+                                            <th>Departamento</th>
                                             <th>Proveedor</th>
                                             <th>Refacciones</th>
                                             <th>Completada</th>
@@ -126,6 +137,15 @@
                                     <label for="fechaFinG" class="m-2">Fecha fin:</label>
                                     <input type="date" id="fechaFinG" class="form-control" placeholder="Fecha">
                                 </div>
+                                <div class="col">
+                                    <label for="departamentoG" class="form-label m-2">Departamento</label>
+                                    <select class="form-select" id="departamentoG">
+                                        <option value="0">Todos</option>
+                                        <option value="Lógistica">Lógistica</option>
+                                        <option value="Mantenimiento">Mantenimiento</option>
+                                        <option value="Sistemas">Sistemas</option>
+                                    </select>
+                                </div>
                                 <div class="col d-flex align-items-center justify-content-end mt-2 d-print-none">
                                     <button id="btn_busq" class="btn btn-primary m-2">Buscar</button>
                                     <button id="btn_save" class="btn btn-primary">Guardar</button>
@@ -133,12 +153,13 @@
                             </div>
                             <!-- Tabla -->
                             <div class="table-responsive">
-                                <table id="gestion_tabla" class="table table-bordered table-hover">
+                                <table id="gestion_tabla" class="table table-bordered table-hover align-middle">
                                     <thead>
                                         <tr>
                                             <th>Fecha programada</th>
                                             <th>Nombre</th>
                                             <th>Unidad</th>
+                                            <th>Departamento</th>
                                             <th>Proveedor</th>
                                             <th></th>
                                         </tr>
@@ -174,6 +195,15 @@
                                         <option value="Cancelada">Cancelada</option>
                                     </select>
                                 </div>
+                                <div class="col">
+                                    <label for="departamentoR" class="form-label m-2">Departamento</label>
+                                    <select class="form-select" id="departamentoR">
+                                        <option value="0">Todos</option>
+                                        <option value="Lógistica">Lógistica</option>
+                                        <option value="Mantenimiento">Mantenimiento</option>
+                                        <option value="Sistemas">Sistemas</option>
+                                    </select>
+                                </div>
                                 <div class="col d-flex align-items-center justify-content-end mt-2 d-print-none">
                                     <button id="btn_genR" class="btn btn-primary m-2">Generar</button>
                                     <button id="btn_printR" class="btn btn-primary">Imprimir</button>
@@ -181,12 +211,13 @@
                             </div>
                             <!-- Tabla -->
                             <div class="table-responsive">
-                                <table id="reporte_tabla" class="table table-bordered table-hover">
+                                <table id="reporte_tabla" class="table table-bordered table-hover align-middle">
                                     <thead>
                                         <tr>
                                             <th>Fecha</th>
                                             <th>Tarea</th>
                                             <th>Unidad</th>
+                                            <th>Departamento</th>
                                             <th>Proveedor</th>
                                             <th>Estado</th>
                                             <th>Refacciones</th>

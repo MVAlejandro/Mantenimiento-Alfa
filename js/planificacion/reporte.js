@@ -5,9 +5,10 @@ import supabase from '../supabase/supabase-client.js'
 export async function generarSupervision() {
     const inicioInput = document.getElementById('fechaInicioS').value;
     const finInput = document.getElementById('fechaFinS').value;
+    const departamentoFiltro = document.getElementById('departamentoS').value;
     
-    // Verificar si ambas fechas están vacías
-    if (!inicioInput && !finInput) {
+    // Verificar si los filtros están vacías
+    if (!inicioInput && !finInput && departamentoFiltro === '0') {
         generarTablaSuper([]);
         return;
     }
@@ -21,7 +22,7 @@ export async function generarSupervision() {
             .from('tareas')
             .select(`
                 *,
-                unidades:id_unidad(nombre),
+                unidades:id_unidad(nombre, departamento),
                 tarea_proveedor!tarea_proveedor_id_tarea_fkey (
                     id_proveedor,
                     proveedores (id_proveedor, nombre)
@@ -42,14 +43,19 @@ export async function generarSupervision() {
                 ? tarea.calendario[tarea.calendario.length - 1] 
                 : null;
                 
+            // Obtener proveedor de la tarea
             const proveedor = tarea.tarea_proveedor && tarea.tarea_proveedor.length > 0
                 ? tarea.tarea_proveedor[0].proveedores.nombre
                 : 'Sin asignar';
+
+            // Obtener departamento de la unidad
+            const departamento = tarea.unidades ? tarea.unidades.departamento : 'N/A';
 
             return {
                 id_tarea: tarea.id_tarea,
                 nombre: tarea.nombre,
                 id_unidad: tarea.unidades ? tarea.unidades.nombre : tarea.id_unidad,
+                departamento: departamento,
                 id_proveedor: proveedor,
                 fecha_programada: ultimoCalendario ? ultimoCalendario.fecha_programada : null,
                 estado: ultimoCalendario ? ultimoCalendario.estado : 'Pendiente'
@@ -59,13 +65,20 @@ export async function generarSupervision() {
         // Filtrar por fechas si se especificaron
         let tareasFiltradas = tareasProcesadas;
         
-        if (inicioInput || finInput) {
+        if (inicioInput || finInput || departamentoFiltro !== '0') {
             tareasFiltradas = tareasProcesadas.filter(t => {
-                if (!t.fecha_programada) return false;
+                // Filtro por fechas
+                let cumpleFechas = true;
+                if (t.fecha_programada) {
+                    const fecha = new Date(t.fecha_programada);
+                    cumpleFechas = (!isNaN(inicio) ? fecha >= inicio : true) &&
+                                  (!isNaN(fin) ? fecha <= fin : true);
+                }
                 
-                const fecha = new Date(t.fecha_programada);
-                return (!isNaN(inicio) ? fecha >= inicio : true) &&
-                       (!isNaN(fin) ? fecha <= fin : true);
+                // Filtro por departamento
+                const cumpleDepartamento = departamentoFiltro === '0' || t.departamento === departamentoFiltro;
+                
+                return cumpleFechas && cumpleDepartamento;
             });
         }
 
@@ -82,7 +95,7 @@ function generarTablaSuper(tareas) {
     tbody.innerHTML = "";
 
     if (tareas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7">No hay tareas en este rango</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8">No hay tareas en este rango</td></tr>`;
         return;
     }
 
@@ -97,6 +110,7 @@ function generarTablaSuper(tareas) {
             <th scope="row">${t.fecha_programada || 'Sin fecha'}</th>
             <td>${t.nombre}</td>
             <td>${t.id_unidad}</td>
+            <td>${t.departamento}</td>
             <td>${t.id_proveedor}</td>
             <td></td>
             ${celdaEstado}
@@ -111,9 +125,10 @@ export async function generarReporte() {
     const inicioInput = document.getElementById('fechaInicioR').value;
     const finInput = document.getElementById('fechaFinR').value;
     const estadoFiltro = document.getElementById('estadoR').value;
+    const departamentoFiltro = document.getElementById('departamentoR').value;
     
     // Verificar si todos los filtros están vacíos
-    if (!inicioInput && !finInput && estadoFiltro === '0') {
+    if (!inicioInput && !finInput && estadoFiltro === '0' && departamentoFiltro === '0') {
         generarTablaReporte([]);
         return;
     }
@@ -127,7 +142,7 @@ export async function generarReporte() {
             .from('tareas')
             .select(`
                 *,
-                unidades:id_unidad(nombre),
+                unidades:id_unidad(nombre, departamento),
                 tarea_proveedor!tarea_proveedor_id_tarea_fkey (
                     id_proveedor,
                     proveedores (id_proveedor, nombre)
@@ -165,11 +180,15 @@ export async function generarReporte() {
                   ).join(', ')
                 : 'Ninguna';
 
+            // Obtener departamento de la unidad
+            const departamento = tarea.unidades ? tarea.unidades.departamento : 'N/A';
+
             return {
                 fecha_programada: ultimoCalendario ? ultimoCalendario.fecha_programada : null,
                 fecha_realizada: ultimoCalendario ? ultimoCalendario.fecha_realizada : null,
                 nombre: tarea.nombre,
                 id_unidad: tarea.unidades ? tarea.unidades.nombre : tarea.id_unidad,
+                departamento: departamento,
                 id_proveedor: proveedor,
                 estado: ultimoCalendario ? ultimoCalendario.estado : 'Pendiente',
                 refacciones: refacciones,
@@ -177,10 +196,10 @@ export async function generarReporte() {
             };
         });
 
-        // Filtrar por fechas Y estado
+        // Filtrar por fechas, estado Y departamento
         let tareasFiltradas = tareasProcesadas;
         
-        if (inicioInput || finInput || estadoFiltro !== '0') {
+        if (inicioInput || finInput || estadoFiltro !== '0' || departamentoFiltro !== '0') {
             tareasFiltradas = tareasProcesadas.filter(t => {
                 // Filtro por fechas
                 let cumpleFechas = true;
@@ -193,7 +212,10 @@ export async function generarReporte() {
                 // Filtro por estado
                 const cumpleEstado = estadoFiltro === '0' || t.estado === estadoFiltro;
                 
-                return cumpleFechas && cumpleEstado;
+                // Filtro por departamento
+                const cumpleDepartamento = departamentoFiltro === '0' || t.departamento === departamentoFiltro;
+                
+                return cumpleFechas && cumpleEstado && cumpleDepartamento;
             });
         }
 
@@ -210,7 +232,7 @@ function generarTablaReporte(tareas) {
     tbody.innerHTML = "";
 
     if (tareas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7">No hay tareas que coincidan con los filtros</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8">No hay tareas que coincidan con los filtros</td></tr>`;
         return;
     }
 
@@ -220,6 +242,7 @@ function generarTablaReporte(tareas) {
             <th scope="row">${t.fecha_programada || 'Sin fecha'}</th>
             <td>${t.nombre}</td>
             <td>${t.id_unidad}</td>
+            <td>${t.departamento}</td>
             <td>${t.id_proveedor}</td>
             <td>${t.estado}</td>
             <td>${t.refacciones}</td>

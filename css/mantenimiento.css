@@ -1,12 +1,16 @@
+
 /* Fondo general */
 body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f4f7fc; /* Fondo más suave */
+    font-family: 'Arial', sans-serif; /* Tipografía más moderna */
 }
+
 /* Estructura */
 main {
-  flex: 1; 
+    flex: 1;
 }
 
 /*--- BARRA DE NAVEGACION PRINCIPAL ---*/
@@ -14,53 +18,82 @@ main {
     display: none !important;
 }
 
-/* CONTENEDOR PRINCIPAL */
+/*--- CONTENIDO PRINCIPAL ---*/
 /* Cards de navegación */
 .row {
     display: flex;
     gap: 30px;
+    justify-content: center;
 }
+    
 .card {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    border: none;
+    border-radius: 15px; 
+    overflow: hidden; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    transition: transform 0.3s ease; /* Transición suave al hacer hover */
 }
+
+.card:hover {
+    transform: translateY(-5px); /* Efecto de elevación al pasar el ratón */
+}
+
 .card-body {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    padding: 20px;
 }
-.card-body .btn-wrapper {
-    margin-top: auto;
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
 }
+
+.card-text {
+    color: #666;
+    font-size: 0.95rem;
+}
+
 .card-subtext {
-    font-size: small;
+    font-size: 0.85rem;
+    color: #999;
 }
+
 .card-img {
-    height: 200px !important;
+    height: 200px;
 }
+
 .card-img-top {
-    width: 100px !important;
+    width: 150px !important;
     object-fit: contain;
+    padding: 10px;
+    background-color: #ffffff;
 }
 
 .btn {
-    border: 1px solid #8FC74A !important;
-    color: #8FC74A !important;
+    border: 2px solid #8FC74A;
+    color: #8FC74A;
     background-color: transparent;
-    font-weight: bolder !important;
-    transition: all 0.2s ease;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
 }
+
 .btn:hover {
-    background-color: #8FC74A !important;
-    color: white !important;
-}
-
-/*--- FOOTER ---*/
-#site_footer {
-    background-color: #222222;
-}
-
-#texto_footer {
+    background-color: #8FC74A;
     color: white;
+    border: 2px solid #8FC74A;
+    box-shadow: 0 4px 8px rgba(143, 199, 74, 0.4); /* Sombra cuando se pasa el ratón */
+}
+
+.btn-wrapper {
+    margin-top: auto;
+    padding-top: 15px;
 }
