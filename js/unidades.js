@@ -4,24 +4,58 @@ import supabase from './supabase/supabase-client.js'
 import { validarCamposInvalidos, validarSelect } from "../js/validaciones/validar_campos.js"
 import { validarText, validarId, validarAño } from "./validaciones/regex.js"
 
-// Función para cargar encargados en el select
-async function cargarEncargados() {
-    const { data, error } = await supabase.from('encargados').select('id_encargado, nombre')
-    const select = document.getElementById('encargado')
-    select.innerHTML = '<option value="0">Seleccione...</option>'
+// Función para cargar departamentos en el select
+async function cargarDepartamentos() {
+    const { data, error } = await supabase.from('departamentos').select('id_departamento, nombre');
+
+    const selectDepto = document.getElementById('departamento');
+    selectDepto.innerHTML = '<option value="0">Seleccione...</option>';
 
     if (error) {
-        console.error('Error cargando encargados:', error)
-        return
+        console.error("Error cargando departamentos:", error);
+        return;
     }
 
-    data.forEach(encargado => {
-        const option = document.createElement('option')
-        option.value = encargado.id_encargado
-        option.textContent = encargado.nombre
-        select.appendChild(option)
-    })
+    data.forEach(depto => {
+        const option = document.createElement('option');
+        option.value = depto.id_departamento;
+        option.textContent = depto.nombre;
+        selectDepto.appendChild(option);
+    });
 }
+
+// Función para cargar empleado en el select
+async function cargarEmpleados(idDepartamento) {
+    const { data, error } = await supabase
+        .from('empleados')
+        .select('id_empleado, nombre')
+        .eq('id_departamento', idDepartamento);
+
+    const selectEmpleado = document.getElementById('empleado');
+    selectEmpleado.innerHTML = '<option value="0">Seleccione...</option>';
+
+    if (error) {
+        console.error("Error cargando empleados:", error);
+        return;
+    }
+
+    data.forEach(emp => {
+        const option = document.createElement('option');
+        option.value = emp.id_empleado;
+        option.textContent = emp.nombre;
+        selectEmpleado.appendChild(option);
+    });
+}
+
+// Detectar cambio en el select de departamento
+document.getElementById('departamento').addEventListener('change', function() {
+    const idDepto = this.value;
+    if (idDepto !== "0") {
+        cargarEmpleados(idDepto);
+    } else {
+        document.getElementById('empleado').innerHTML = '<option value="0">Seleccione...</option>';
+    }
+});
 
 // Función para insertar una nueva unidad en Supabase
 async function insertarUnidad(unidad) {
@@ -50,10 +84,12 @@ async function cargarUnidades() {
         nombre,
         modelo,
         anio,
-        departamento,
         descripcion,
-        id_encargado (nombre)
-        `)
+        id_empleado (
+        nombre,
+        departamentos (nombre)
+        )
+    `)
 
     if (error) {
         desglose.innerHTML = '<p>Error al cargar unidades</p>'
@@ -72,7 +108,7 @@ async function cargarUnidades() {
             <div class="card-header">
                 <div class="row">
                     <div class="col-6"><strong>ID:</strong> ${unidad.id_unidad}</div>
-                    <div class="col-6 text-end"><strong>Encargado:</strong> ${unidad.id_encargado?.nombre}</div>
+                    <div class="col-6 text-end"><strong>Empleado a cargo:</strong> ${unidad.id_empleado?.nombre}</div>
                 </div>
             </div>
             <div class="card-body">
@@ -81,7 +117,7 @@ async function cargarUnidades() {
                     <div class="col-6"><p class="info"><strong>Modelo:</strong> ${unidad.modelo}</p></div>
                     <div class="col-6"><p class="info"><strong>Año:</strong> ${unidad.anio}</p></div>
                 </div>
-                <p class="info"><strong>Departamento:</strong> ${unidad.departamento}</p>
+                <p class="info"><strong>Departamento:</strong> ${unidad.id_empleado?.departamentos?.nombre}</p>
                 <p class="info"><strong>Descripción:</strong> ${unidad.descripcion}</p>
             </div>
         </div>`
@@ -99,7 +135,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     const anio = document.getElementById('año').value
     const departamento = document.getElementById('departamento').value
     const descripcion = document.getElementById('descripcion').value
-    const id_encargado = document.getElementById('encargado').value
+    const id_empleado = document.getElementById('empleado').value
 
     // Referencias para validación
     const id_unidadIn = document.getElementById('id_u')
@@ -108,7 +144,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     const anioIn = document.getElementById('año')
     const departamentoIn = document.getElementById('departamento')
     const descripcionIn = document.getElementById('descripcion')
-    const id_encargadoIn = document.getElementById('encargado')
+    const id_empleadoIn = document.getElementById('empleado')
 
     const error_id = document.getElementById('error-id')
     const error_nombre = document.getElementById('error-nombre')
@@ -116,7 +152,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     const error_año = document.getElementById('error-año')
     const error_departamento = document.getElementById('error-departamento')
     const error_descripcion = document.getElementById('error-descripcion')
-    const error_encargado = document.getElementById('error-encargado')
+    const error_empleado = document.getElementById('error-empleado')
 
     // Validaciones
     validarId(id_unidadIn, error_id)
@@ -125,9 +161,9 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     validarAño(anioIn, error_año)
     validarSelect(departamentoIn, error_departamento)
     validarText(descripcionIn, error_descripcion)
-    validarSelect(id_encargadoIn, error_encargado)
+    validarSelect(id_empleadoIn, error_empleado)
 
-    if (!id_unidad || !nombre || !modelo || !anio || !departamento || !descripcion || !id_encargado) {
+    if (!id_unidad || !nombre || !modelo || !anio || !departamento || !descripcion || !id_empleado) {
         alert('Por favor, complete todos los campos para agregar la entrada.')
         return
     }
@@ -139,12 +175,12 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     }
 
     // Insertar en Supabase
-    const nuevaUnidad = { id_unidad, nombre, modelo, anio, departamento, descripcion, id_encargado }
+    const nuevaUnidad = { id_unidad, nombre, modelo, anio, descripcion, id_empleado }
     await insertarUnidad(nuevaUnidad)
 })
 
-// Cargar los encargados y unidades al iniciar la página
+// Cargar los empleados y unidades al iniciar la página
 document.addEventListener('DOMContentLoaded', () => {
-    cargarEncargados()
+    cargarDepartamentos()
     cargarUnidades()
 })

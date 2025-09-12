@@ -48,8 +48,10 @@
                             <div class="tab-content" id="agendaTabsContent">
                                 <!-- Vista Calendario -->
                                 <div class="tab-pane fade show active" id="calendario" role="tabpanel">
-                                    <div id="calendario-container" class="mb-5">
+                                    <div class="calendario_container mb-5">
+                                        <div id="calendario-element">
 
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- Vista Gantt -->
@@ -88,10 +90,7 @@
                                 <div class="col">
                                     <label for="departamentoS" class="form-label m-2">Departamento</label>
                                     <select class="form-select" id="departamentoS">
-                                        <option value="0">Todos</option>
-                                        <option value="Lógistica">Lógistica</option>
-                                        <option value="Mantenimiento">Mantenimiento</option>
-                                        <option value="Sistemas">Sistemas</option>
+
                                     </select>
                                 </div>
                                 <div class="col d-flex align-items-center justify-content-end mt-2 d-print-none">
@@ -139,10 +138,7 @@
                                 <div class="col">
                                     <label for="departamentoG" class="form-label m-2">Departamento</label>
                                     <select class="form-select" id="departamentoG">
-                                        <option value="0">Todos</option>
-                                        <option value="Lógistica">Lógistica</option>
-                                        <option value="Mantenimiento">Mantenimiento</option>
-                                        <option value="Sistemas">Sistemas</option>
+
                                     </select>
                                 </div>
                                 <div class="col d-flex align-items-center justify-content-end mt-2 d-print-none">
@@ -197,10 +193,7 @@
                                 <div class="col">
                                     <label for="departamentoR" class="form-label m-2">Departamento</label>
                                     <select class="form-select" id="departamentoR">
-                                        <option value="0">Todos</option>
-                                        <option value="Lógistica">Lógistica</option>
-                                        <option value="Mantenimiento">Mantenimiento</option>
-                                        <option value="Sistemas">Sistemas</option>
+
                                     </select>
                                 </div>
                                 <div class="col d-flex align-items-center justify-content-end mt-2 d-print-none">
@@ -308,8 +301,8 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.min.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
-<script src="/js/verificacion.js" type="module"></script>
 <script src="./js/nav.js" type="module"></script>
+<script src="/js/verificacion.js" type="module"></script>
 <script src="./js/planificacion.js" type="module"></script>
 </body>
 </html>

@@ -48,7 +48,7 @@ async function verificarAutenticacion() {
 document.addEventListener('DOMContentLoaded', async function() {
     // Esperar a que Supabase esté completamente inicializado
     if (typeof supabase !== 'undefined') {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 50));
         await verificarAutenticacion();
     }
 });

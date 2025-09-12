@@ -129,6 +129,25 @@ main {
     padding: 20px;
 }
 
+/* Ajustes para el calendario */
+.agenda-container {
+    padding: 15px 0;
+}
+        
+.calendario_container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: white;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+        
+#calendario-element {
+    width: 100%;
+    min-height: 500px;
+}
+
 #gantt_diagrama {
     background-color: #fafafa;
     padding: 20px;
@@ -231,5 +250,66 @@ main {
         padding: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
+    }
+}
+        
+/* Estilos responsivos para el calendario */
+@media (max-width: 768px) {
+    .fc-toolbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+            
+    .fc-toolbar-title {
+        font-size: 1.4em !important;
+        margin: 5px 0;
+    }
+            
+    .fc .fc-toolbar.fc-header-toolbar {
+        margin-bottom: 10px !important;
+    }
+            
+    .fc .fc-button {
+        padding: 0.3em 0.4em;
+        font-size: 0.85em;
+    }
+            
+    .fc-col-header-cell-cushion {
+        font-size: 0.8em;
+        padding: 2px 4px;
+    }
+            
+    .fc-daygrid-day-number {
+        font-size: 0.8em;
+    }
+            
+    .fc-event-time, .fc-event-title {
+        font-size: 0.7em;
+        padding: 1px;
+    }
+}
+        
+@media (max-width: 576px) {
+    .fc-header-toolbar .fc-toolbar-chunk {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+            
+    .fc-toolbar-title {
+        font-size: 1.2em !important;
+    }
+            
+    .fc .fc-button {
+        font-size: 0.75em;
+        padding: 0.25em 0.35em;
+    }
+            
+    .fc .fc-view-harness {
+        min-height: 400px !important;
+    }
+            
+    #calendario-element {
+        min-height: 400px;
     }
 }

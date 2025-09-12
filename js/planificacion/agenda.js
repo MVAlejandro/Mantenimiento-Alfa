@@ -30,7 +30,13 @@ async function cargarTareas() {
         .from('tareas')
         .select(`
             *,
-            unidades:id_unidad(nombre, departamento),
+            unidades:id_unidad(
+                nombre,
+                id_empleado (
+                    nombre,
+                    departamentos (nombre)
+                )
+            ),
             sistemas:id_sistema(tipo),
             periodicidad:id_periodicidad(nombre),
             tarea_proveedor!tarea_proveedor_id_tarea_fkey (
@@ -63,7 +69,7 @@ async function cargarTareas() {
                 : 'Pendiente'; // Estado por defecto
 
             // Obtener el departamento de la unidad
-            const departamento = tarea.unidades ? tarea.unidades.departamento : 'N/A';
+            const departamento = tarea.unidades?.id_empleado?.departamentos?.nombre || 'N/A';
 
             return {
                 id: 'T' + tarea.id_tarea,
@@ -133,7 +139,7 @@ export async function generarCalendario() {
     // Cargar tareas antes de inicializar
     await cargarTareas();
     
-    const calendarEl = document.getElementById('calendario-container');
+    const calendarEl = document.getElementById('calendario-element');
     if (calendarEl) {
         calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',

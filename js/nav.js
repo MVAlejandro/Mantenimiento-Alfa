@@ -2,108 +2,88 @@
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
 import supabase from './supabase/supabase-client.js'
 
-const header = document.getElementById("site_header");
-const footer = document.getElementById("site_footer");
-const bar = document.getElementById("top_bar");
+document.addEventListener("DOMContentLoaded", () => {
+    const header = document.getElementById("site_header");
+    const footer = document.getElementById("site_footer");
+    const bar = document.getElementById("top_bar");
 
-window.addEventListener("load", function(event){
-    crearBarra();
-    crearHeader();
-    crearFooter();
+    // Crear barra superior, header y footer
+    crearBarra(bar);
+    crearHeader(header);
+    crearFooter(footer);
 
-    const currentLocation = window.location.href;
-    const menuItems = document.querySelectorAll('.nav-link');
-        
-    menuItems.forEach(item => {
-        if (item.href === currentLocation) {
-            item.classList.add('active');
-        }
-    });
+    // Marcar la pestaña activa en la navbar
+    marcarPestanaActiva();
 });
 
 // Función para cerrar sesión con Supabase
 async function cerrarSesion() {
     try {
-        // Cerrar sesión en Supabase
         const { error } = await supabase.auth.signOut();
-        
-        if (error) {
-            console.error('Error al cerrar sesión:', error);
-        }
-        
-        // Redirigir al login
-        window.location.href = './login.html';
-        
+        if (error) console.error("Error al cerrar sesión:", error);
+
+        window.location.href = "./login.html";
     } catch (error) {
-        console.error('Error inesperado al cerrar sesión:', error);
-        window.location.href = './login.html';
+        console.error("Error inesperado al cerrar sesión:", error);
+        window.location.href = "./login.html";
     }
 }
 
-function crearBarra(){
-    bar.insertAdjacentHTML("beforeend",
+// Crear barra superior
+function crearBarra(bar) {
+    bar.insertAdjacentHTML(
+        "beforeend",
         `<div class="cerrar_sesion d-flex align-items-center">
             <button id="btn_logout" class="btn">Salir</button>
         </div>`
     );
-    
-    // Agregar el cierre de sesión al botón
-    document.getElementById('btn_logout').addEventListener('click', cerrarSesion);
+
+    document.getElementById("btn_logout").addEventListener("click", cerrarSesion);
 }
 
-function crearHeader(){
+// Crear header/navbar
+function crearHeader(header) {
     const currentLocation = window.location.href;
     let logoHref = "./mantenimiento.html"; // Valor por defecto
 
-    // Si la ubicación actual es login.html, cambia el enlace del logo
     if (currentLocation.includes("login.html")) {
-        logoHref = 'https://palletsalfatexcoco.com.mx/inicio/';
+        logoHref = "https://palletsalfatexcoco.com.mx/inicio/";
     }
 
-    header.insertAdjacentHTML("afterbegin",
+    header.insertAdjacentHTML(
+        "afterbegin",
         `<nav id="nav_principal" class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <a id="nav_logo" class="navbar-brand" href="${logoHref}">
                     <img src="./assets/Logo-Color-PNG-62x51.png" alt="Pallets Alfa logo">
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
-                <ul class="navbar-nav">
-                    <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="./unidades.html">Unidades</a>
-                    </li>
-                    <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="./sistemas.html">Sistemas</a>
-                    </li>
-                    <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="./refacciones.html">Refacciones</a>
-                    </li>
-                    <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="./proveedores.html">Proveedores</a>
-                    </li>
-                    <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="./tareas.html">Tareas</a>
-                    </li>
-                    <li class="nav-item ms-2 me-2">
-                        <a class="nav-link nav-prin" href="./planificacion.html">Planificación</a>
-                    </li>
-                </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./unidades.html">Unidades</a></li>
+                        <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./sistemas.html">Sistemas</a></li>
+                        <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./refacciones.html">Refacciones</a></li>
+                        <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./proveedores.html">Proveedores</a></li>
+                        <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./tareas.html">Tareas</a></li>
+                        <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./planificacion.html">Planificación</a></li>
+                    </ul>
                 </div>
             </div>
         </nav>`
     );
 }
 
-function crearFooter(){
-    footer.insertAdjacentHTML("beforeend",
+// Crear footer
+function crearFooter(footer) {
+    footer.insertAdjacentHTML(
+        "beforeend",
         `<div class="container">
             <hr>
             <div class="row align-items-center">
-                <div id="img_footer" class="col text-start">
-                    
-                </div>
+                <div id="img_footer" class="col text-start"></div>
                 <div id="texto_footer" class="col text-end">
                     <p>Pallets Alfa Texcoco</p>
                 </div>
@@ -111,4 +91,16 @@ function crearFooter(){
             <br>
         </div>`
     );
+}
+
+// Marcar la pestaña activa en la navbar
+function marcarPestanaActiva() {
+    const currentLocation = window.location.href;
+    const menuItems = document.querySelectorAll(".nav-link");
+
+    menuItems.forEach(item => {
+        if (item.href === currentLocation) {
+            item.classList.add("active");
+        }
+    });
 }

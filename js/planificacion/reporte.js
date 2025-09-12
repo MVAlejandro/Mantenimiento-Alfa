@@ -2,6 +2,31 @@
 import supabase from '../supabase/supabase-client.js'
 
 // ---------- SUPERVISIÓN ----------//
+// Función para cargar departamentos en el select
+async function cargarDepartamentos(deptoElement) {
+    const { data, error } = await supabase.from('departamentos').select('id_departamento, nombre');
+
+    const selectDepto = document.getElementById(deptoElement);
+    selectDepto.innerHTML = '<option value="0">Todos</option>';
+
+    if (error) {
+        console.error("Error cargando departamentos:", error);
+        return;
+    }
+
+    data.forEach(depto => {
+        const option = document.createElement('option');
+        option.value = depto.id_departamento;
+        option.textContent = depto.nombre;
+        selectDepto.appendChild(option);
+    });
+}
+
+// Cargar los departamentos al iniciar la página
+document.addEventListener('DOMContentLoaded', () => {
+    cargarDepartamentos('departamentoS')
+})
+
 export async function generarSupervision() {
     const inicioInput = document.getElementById('fechaInicioS').value;
     const finInput = document.getElementById('fechaFinS').value;
@@ -22,7 +47,13 @@ export async function generarSupervision() {
             .from('tareas')
             .select(`
                 *,
-                unidades:id_unidad(nombre, departamento),
+                unidades:id_unidad(
+                    nombre,
+                    id_empleado (
+                        nombre,
+                        departamentos (nombre)
+                    )
+                ),
                 tarea_proveedor!tarea_proveedor_id_tarea_fkey (
                     id_proveedor,
                     proveedores (id_proveedor, nombre)
@@ -49,7 +80,7 @@ export async function generarSupervision() {
                 : 'Sin asignar';
 
             // Obtener departamento de la unidad
-            const departamento = tarea.unidades ? tarea.unidades.departamento : 'N/A';
+            const departamento = tarea.unidades?.id_empleado?.departamentos?.nombre || 'N/A';
 
             return {
                 id_tarea: tarea.id_tarea,
@@ -121,6 +152,11 @@ function generarTablaSuper(tareas) {
 
 
 // ---------- REPORTE ----------//
+// Cargar los departamentos al iniciar la página
+document.addEventListener('DOMContentLoaded', () => {
+    cargarDepartamentos('departamentoR')
+})
+
 export async function generarReporte() {
     const inicioInput = document.getElementById('fechaInicioR').value;
     const finInput = document.getElementById('fechaFinR').value;
@@ -142,7 +178,13 @@ export async function generarReporte() {
             .from('tareas')
             .select(`
                 *,
-                unidades:id_unidad(nombre, departamento),
+                unidades:id_unidad(
+                    nombre,
+                    id_empleado (
+                        nombre,
+                        departamentos (nombre)
+                    )
+                ),
                 tarea_proveedor!tarea_proveedor_id_tarea_fkey (
                     id_proveedor,
                     proveedores (id_proveedor, nombre)
@@ -181,7 +223,7 @@ export async function generarReporte() {
                 : 'Ninguna';
 
             // Obtener departamento de la unidad
-            const departamento = tarea.unidades ? tarea.unidades.departamento : 'N/A';
+            const departamento = tarea.unidades?.id_empleado?.departamentos?.nombre || 'N/A';
 
             return {
                 fecha_programada: ultimoCalendario ? ultimoCalendario.fecha_programada : null,
