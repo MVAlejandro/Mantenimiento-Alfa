@@ -4,8 +4,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #f4f7fc; /* Fondo más suave */
-    font-family: 'Arial', sans-serif; /* Tipografía más moderna */
+    background-color: #f4f7fc;
+    font-family: 'Arial', sans-serif;
 }
 
 /* Estructura */
@@ -87,10 +87,14 @@ main {
 }
 
 .btn:hover {
-    background-color: #8FC74A;
-    color: white;
-    border: 2px solid #8FC74A;
-    box-shadow: 0 4px 8px rgba(143, 199, 74, 0.4); /* Sombra cuando se pasa el ratón */
+    background-color: #6c9639;
+    border-color: #6c9639;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(143, 199, 74, 0.5);
 }
 
 .btn-wrapper {
