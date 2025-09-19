@@ -356,7 +356,8 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
         alert('Error al actualizar la unidad: ' + error.message);
     } else {
         alert('Unidad actualizada correctamente');
-        generarTablaUnidades();
+        const unidadesActualizadas = await obtenerUnidadesCompletas();
+        generarTablaUnidades(unidadesActualizadas);
         bootstrap.Modal.getInstance(document.getElementById('unidad_modal')).hide();
     }
 });

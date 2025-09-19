@@ -276,7 +276,8 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
         alert('Error al actualizar el proveedor: ' + error.message);
     } else {
         alert('proveedor actualizado correctamente');
-        generarTablaProveedores();
+        const proveedoresActualizados = await obtenerProveedoresCompletos();
+        generarTablaProveedores(proveedoresActualizados);
         bootstrap.Modal.getInstance(document.getElementById('proveedor_modal')).hide();
     }
 });

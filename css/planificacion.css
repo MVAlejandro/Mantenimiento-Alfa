@@ -48,13 +48,15 @@ main {
 
 /* Botones en las pestañas */
 .btn {
-    border-radius: 50px;
-    font-weight: 600;
-    padding: 10px 20px;
+    border: 2px solid #8FC74A;
+    color: #8FC74A;
+    background-color: transparent;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 4px 8px;
+    text-transform: uppercase;
     transition: all 0.3s ease;
-    background-color: #8FC74A;
-    color: white;
-    border: none;
+    font-size: 0.9rem;
 }
 
 .btn:hover {
@@ -62,16 +64,9 @@ main {
     border-color: #6c9639;
 }
 
-/* Botones de acción */
-.btn-primary {
-    background-color: #8FC74A;
-    border: 1px solid #8FC74A;
-    padding: 8px 15px;
-}
-
-.btn-primary:hover {
-    background-color: #6c9639;
-    border-color: #6c9639;
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(143, 199, 74, 0.5);
 }
 
 .tarea-btn {

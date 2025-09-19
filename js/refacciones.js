@@ -267,7 +267,8 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
         alert('Error al actualizar la refacción: ' + error.message);
     } else {
         alert('Refacción actualizada correctamente');
-        generarTablaRefacciones();
+        const refaccionesActualizadas = await obtenerRefaccionesCompletas();
+        generarTablaRefacciones(refaccionesActualizadas);
         bootstrap.Modal.getInstance(document.getElementById('refaccion_modal')).hide();
     }
 });

@@ -223,7 +223,8 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
         alert('Error al actualizar el sistema: ' + error.message);
     } else {
         alert('Sistema actualizado correctamente');
-        generarTablaSistemas();
+        const sistemasActualizadas = await obtenerSistemasCompletos();
+        generarTablaSistemas(sistemasActualizadas);
         bootstrap.Modal.getInstance(document.getElementById('sistema_modal')).hide();
     }
 });
