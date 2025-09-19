@@ -4,59 +4,159 @@ import supabase from './supabase/supabase-client.js'
 import {validarCamposInvalidos} from "../js/validaciones/validar_campos.js"
 import {validarText, validarId, validarCosto} from "./validaciones/regex.js"
 
+// Función centralizada para obtener refacciones
+async function obtenerRefaccionesCompletas() {
+    const { data, error } = await supabase
+        .from('refacciones')
+        .select('*');
+    
+    if (error) {
+        console.error('Error obteniendo refacciones:', error);
+        throw error;
+    }
+    
+    return data.map(refaccion => ({
+        id_refaccion: refaccion.id_refaccion,
+        nombre: refaccion.nombre,
+        costo_unitario: refaccion.costo_unitario,
+        unidad_medida: refaccion.unidad_medida,
+        descripcion: refaccion.descripcion
+    }));
+}
+
 // Función para insertar una nueva refacción en Supabase
 async function insertarRefaccion(refaccion) {
     const { data, error } = await supabase.from('refacciones').insert([refaccion])
 
     if (error) {
         console.error(error)
-        alert('Error al guardar la refacción: ' + error.message)
+        alert('Error al guardar la refaccion: ' + error.message)
     } else {
-        alert('Refacción agregada con éxito')
-        cargarRefacciones() // actualizar listado
+        alert('Refaccion agregada con éxito')
+        generarTablaRefacciones() // actualizar listado
         // Limpiar formulario
         document.querySelector('form').reset()
     }
 }
 
-// Función para cargar las refacciones desde Supabase
-async function cargarRefacciones() {
-    const { data, error } = await supabase.from('refacciones').select('*')
+// Función de filtrado
+document.getElementById('filtro_tipo').addEventListener('change', async function () {
+    const tipo = this.value;
+    const selectOrden = document.getElementById('filtro_orden');
 
-    const desglose = document.getElementById('desglose')
-    desglose.innerHTML = ''
+    // Limpiar opciones anteriores
+    selectOrden.innerHTML = '';
 
-    if (error) {
-        desglose.innerHTML = '<p>Error al cargar refacciones</p>'
-        console.error(error)
-        return
+    if (tipo === '0') {
+        selectOrden.disabled = true;
+        return;
     }
 
-    if (data.length === 0) {
-        desglose.innerHTML = '<p>No hay refacciones registradas.</p>'
-        return
+    selectOrden.disabled = false;
+
+    // Obtener refacciones usando la función centralizada
+    const refacciones = await obtenerRefaccionesCompletas();
+    if (!refacciones) return;
+
+    let opciones = [];
+
+    // Obtener valores únicos según el tipo
+    switch (tipo) {
+        case 'id_refaccion':
+            opciones = refacciones.map(r => r.id_refaccion);
+            break;
+        case 'nombre':
+            opciones = refacciones.map(r => r.nombre);
+            break;
+        case 'unidad_medida':
+            opciones = refacciones.map(r => r.unidad_medida);
+            break;
     }
 
-    data.forEach(refaccion => {
-        desglose.innerHTML +=
-        `<div class="card mb-3">
-            <div class="card-header">
-                <strong>ID:</strong> ${refaccion.id_refaccion}
-            </div>
-            <div class="card-body">
-                <p class="info"><strong>Nombre:</strong> ${refaccion.nombre}</p>
-                <div class="row">
-                    <div class="col-6">
-                        <p class="info"><strong>Costo:</strong> $${refaccion.costo_unitario}</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="info"><strong>Unidad:</strong> ${refaccion.unidad_medida}</p>
-                    </div>
-                </div>
-                <p class="info"><strong>Descripción:</strong> ${refaccion.descripcion}</p>
-            </div>
-        </div>`
-    })
+    // Eliminar duplicados y valores vacíos
+    const opcionesUnicas = [...new Set(opciones)].filter(v => v);
+
+    // Agregar opciones al select
+    selectOrden.innerHTML = '<option value="0">Todos</option>';
+    opcionesUnicas.forEach(opcion => {
+        const optionEl = document.createElement('option');
+        optionEl.value = opcion;
+        optionEl.textContent = opcion;
+        selectOrden.appendChild(optionEl);
+    });
+});
+
+// Función al dar click en botón de filtrado
+document.getElementById('btn_filtro').addEventListener('click', async function () {
+    const tipo = document.getElementById('filtro_tipo').value;
+    const valorSeleccionado = document.getElementById('filtro_orden').value;
+    const textoBusqueda = document.getElementById('filtro_buscar').value.trim().toLowerCase();
+
+    // Obtener refacciones usando la función centralizada
+    const refaccionesProcesadas = await obtenerRefaccionesCompletas();
+    if (!refaccionesProcesadas) return;
+
+    // Si no hay filtros activos, mostrar todo
+    const sinFiltros =
+        tipo === '0' &&
+        (!valorSeleccionado || valorSeleccionado === '0') &&
+        textoBusqueda === '';
+
+    if (sinFiltros) {
+        generarTablaRefacciones(refaccionesProcesadas);
+        return;
+    }
+
+    // Aplicar filtros
+    const filtradas = refaccionesProcesadas.filter(r => {
+        let cumpleSelect = true;
+        let cumpleBusqueda = true;
+
+        // Filtro por select dinámico
+        if (tipo !== '0' && valorSeleccionado !== '0') {
+            const campo = r[tipo]?.toString().toLowerCase();
+            cumpleSelect = campo === valorSeleccionado.toLowerCase();
+        }
+
+        // Filtro por búsqueda libre
+        if (textoBusqueda) {
+            cumpleBusqueda = Object.values(r).some(valor =>
+                valor?.toString().toLowerCase().includes(textoBusqueda)
+            );
+        }
+
+        return cumpleSelect && cumpleBusqueda;
+    });
+
+    generarTablaRefacciones(filtradas);
+});
+
+// Función para cargar las refacciones desde Supabase en la tabla
+function generarTablaRefacciones(refacciones) {
+    const tbody = document.querySelector('#tabla_refacciones tbody');
+    tbody.innerHTML = '';
+
+    if (!refacciones || refacciones.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8">No hay refacciones que coincidan con los filtros</td></tr>`;
+        return;
+    }
+
+    refacciones.forEach(refaccion => {
+        tbody.innerHTML += 
+        `<tr>
+            <th scope="row">${refaccion.id_refaccion}</th>
+            <td>${refaccion.nombre}</td>
+            <td>${refaccion.costo_unitario}</td>
+            <td>${refaccion.unidad_medida}</td>
+            <td>${refaccion.descripcion}</td>
+            <td><button type="button" class="btn btn-primary refaccion-btn" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#refaccion_modal"
+                    data-refaccion='${JSON.stringify(refaccion)}'>
+                    Editar
+                </button></td>
+        </tr>`;
+    });
 }
 
 // Evento al dar click al botón Agregar
@@ -107,6 +207,67 @@ document.getElementById('btn_add').addEventListener('click', async function(even
 })
 
 // Cargar las refacciones al iniciar la página
-document.addEventListener('DOMContentLoaded', () => {
-    cargarRefacciones()
+document.addEventListener('DOMContentLoaded', async () => {
+    generarTablaRefacciones()
+
+    const refaccionesProcesadas = await obtenerRefaccionesCompletas();
+        if (refaccionesProcesadas) {
+            generarTablaRefacciones(refaccionesProcesadas);
+        }
 })
+
+// Declarar los botones de editar
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('refaccion-btn')) {
+        const unidadData = JSON.parse(e.target.getAttribute('data-refaccion'));
+        cargarDatosEnModal(unidadData);
+    }
+});
+
+// Función para cargar datos en el modal
+function cargarDatosEnModal(refaccion) {
+    // Campos no editables (solo lectura)
+    document.getElementById('edit_id_refaccion').value = refaccion.id_refaccion;
+    document.getElementById('edit_id_display').value = refaccion.id_refaccion;
+    
+    // Campos editables
+    document.getElementById('edit_nombre').value = refaccion.nombre;
+    document.getElementById('edit_unidad').value = refaccion.unidad_medida;
+    document.getElementById('edit_costo').value = refaccion.costo_unitario;
+    document.getElementById('edit_descripcion').value = refaccion.descripcion;
+}
+
+// Función para guardar cambios
+document.getElementById('btn_guardar_cambios').addEventListener('click', async function() {
+    const id_refaccion = document.getElementById('edit_id_refaccion').value;
+    const nombre = document.getElementById('edit_nombre').value;
+    const unidad_medida = document.getElementById('edit_unidad').value;
+    const costo_unitario = document.getElementById('edit_costo').value;
+    const descripcion = document.getElementById('edit_descripcion').value;
+
+    // Validar campos requeridos
+    if (!nombre || !unidad_medida || !costo_unitario || !descripcion) {
+        alert('Por favor, complete todos los campos obligatorios');
+        return;
+    }
+
+    // Actualizar en Supabase
+    const { data, error } = await supabase
+        .from('refacciones')
+        .update({ 
+            nombre: nombre, 
+            unidad_medida: unidad_medida, 
+            costo_unitario: costo_unitario, 
+            descripcion: descripcion 
+        })
+        .eq('id_refaccion', id_refaccion);
+
+    if (error) {
+        console.error('Error al actualizar:', error);
+        alert('Error al actualizar la refacción: ' + error.message);
+    } else {
+        alert('Refacción actualizada correctamente');
+        generarTablaRefacciones();
+        bootstrap.Modal.getInstance(document.getElementById('refaccion_modal')).hide();
+    }
+});

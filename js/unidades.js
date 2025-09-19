@@ -74,7 +74,7 @@ document.getElementById('filtro_tipo').addEventListener('change', async function
 
     // Obtener valores únicos según el tipo
     switch (tipo) {
-        case 'id':
+        case 'id_unidad':
             opciones = unidades.map(u => u.id_unidad);
             break;
         case 'nombre':
