@@ -4,6 +4,27 @@ import supabase from './supabase/supabase-client.js'
 import {validarCamposInvalidos} from "../js/validaciones/validar_campos.js"
 import {validarText, validarId, validarTelefono, validarEmail, validarNombre} from "./validaciones/regex.js"
 
+// Función centralizada para obtener proveedores
+async function obtenerProveedoresCompletos() {
+    const { data, error } = await supabase
+        .from('proveedores')
+        .select('*');
+    
+    if (error) {
+        console.error('Error obteniendo proveedores:', error);
+        throw error;
+    }
+    
+    return data.map(proveedor => ({
+        id_proveedor: proveedor.id_proveedor,
+        nombre: proveedor.nombre,
+        empresa: proveedor.empresa,
+        direccion: proveedor.direccion,
+        telefono: proveedor.telefono,
+        correo: proveedor.correo
+    }));
+}
+
 // Función para insertar un nuevo proveedor en Supabase
 async function insertarProveedor(proveedor) {
     const { data, error } = await supabase.from('proveedores').insert([proveedor])
@@ -13,51 +34,131 @@ async function insertarProveedor(proveedor) {
         alert('Error al guardar el proveedor: ' + error.message)
     } else {
         alert('Proveedor agregado con éxito')
-        cargarProveedores() // actualizar listado
+        generarTablaProveedores() // actualizar listado
         // Limpiar formulario
         document.querySelector('form').reset()
     }
 }
 
-// Función para cargar los proveedores desde Supabase
-async function cargarProveedores() {
-    const { data, error } = await supabase.from('proveedores').select('*')
+// Función de filtrado
+document.getElementById('filtro_tipo').addEventListener('change', async function () {
+    const tipo = this.value;
+    const selectOrden = document.getElementById('filtro_orden');
 
-    const desglose = document.getElementById('desglose')
-    desglose.innerHTML = ''
+    // Limpiar opciones anteriores
+    selectOrden.innerHTML = '';
 
-    if (error) {
-        desglose.innerHTML = '<p>Error al cargar proveedores</p>'
-        console.error(error)
-        return
+    if (tipo === '0') {
+        selectOrden.disabled = true;
+        return;
     }
 
-    if (data.length === 0) {
-        desglose.innerHTML = '<p>No hay proveedores registradas.</p>'
-        return
+    selectOrden.disabled = false;
+
+    // Obtener proveedores usando la función centralizada
+    const proveedores = await obtenerProveedoresCompletos();
+    if (!proveedores) return;
+
+    let opciones = [];
+
+    // Obtener valores únicos según el tipo
+    switch (tipo) {
+        case 'id_proveedor':
+            opciones = proveedores.map(p => p.id_proveedor);
+            break;
+        case 'nombre':
+            opciones = proveedores.map(p => p.nombre);
+            break;
+        case 'empresa':
+            opciones = proveedores.map(p => p.empresa);
+            break;
     }
 
-    data.forEach(proveedor => {
-        desglose.innerHTML +=
-        `<div class="card mb-3">
-            <div class="card-header">
-                <strong>ID:</strong> ${proveedor.id_proveedor}
-            </div>
-            <div class="card-body">
-                <p class="info"><strong>Nombre:</strong> ${proveedor.nombre}</p>
-                <p class="info"><strong>Empresa:</strong> ${proveedor.empresa}</p>
-                <p class="info"><strong>Direccion:</strong> ${proveedor.direccion}</p>
-                <div class="row">
-                    <div class="col-6">
-                        <p class="info"><strong>Teléfono:</strong> ${proveedor.telefono}</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="info"><strong>Correo:</strong> ${proveedor.correo}</p>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-    })
+    // Eliminar duplicados y valores vacíos
+    const opcionesUnicas = [...new Set(opciones)].filter(v => v);
+
+    // Agregar opciones al select
+    selectOrden.innerHTML = '<option value="0">Todos</option>';
+    opcionesUnicas.forEach(opcion => {
+        const optionEl = document.createElement('option');
+        optionEl.value = opcion;
+        optionEl.textContent = opcion;
+        selectOrden.appendChild(optionEl);
+    });
+});
+
+// Función al dar click en botón de filtrado
+document.getElementById('btn_filtro').addEventListener('click', async function () {
+    const tipo = document.getElementById('filtro_tipo').value;
+    const valorSeleccionado = document.getElementById('filtro_orden').value;
+    const textoBusqueda = document.getElementById('filtro_buscar').value.trim().toLowerCase();
+
+    // Obtener proveedores usando la función centralizada
+    const proveedoresProcesados = await obtenerProveedoresCompletos();
+    if (!proveedoresProcesados) return;
+
+    // Si no hay filtros activos, mostrar todo
+    const sinFiltros =
+        tipo === '0' &&
+        (!valorSeleccionado || valorSeleccionado === '0') &&
+        textoBusqueda === '';
+
+    if (sinFiltros) {
+        generarTablaProveedores(proveedoresProcesados);
+        return;
+    }
+
+    // Aplicar filtros
+    const filtradas = proveedoresProcesados.filter(p => {
+        let cumpleSelect = true;
+        let cumpleBusqueda = true;
+
+        // Filtro por select dinámico
+        if (tipo !== '0' && valorSeleccionado !== '0') {
+            const campo = p[tipo]?.toString().toLowerCase();
+            cumpleSelect = campo === valorSeleccionado.toLowerCase();
+        }
+
+        // Filtro por búsqueda libre
+        if (textoBusqueda) {
+            cumpleBusqueda = Object.values(p).some(valor =>
+                valor?.toString().toLowerCase().includes(textoBusqueda)
+            );
+        }
+
+        return cumpleSelect && cumpleBusqueda;
+    });
+
+    generarTablaProveedores(filtradas);
+});
+
+// Función para cargar los proveedores desde Supabase en la tabla
+function generarTablaProveedores(proveedores) {
+    const tbody = document.querySelector('#tabla_proveedores tbody');
+    tbody.innerHTML = '';
+
+    if (!proveedores || proveedores.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8">No hay proveedores que coincidan con los filtros</td></tr>`;
+        return;
+    }
+
+    proveedores.forEach(proveedor => {
+        tbody.innerHTML += 
+        `<tr>
+            <th scope="row">${proveedor.id_proveedor}</th>
+            <td>${proveedor.nombre}</td>
+            <td>${proveedor.empresa}</td>
+            <td>${proveedor.direccion}</td>
+            <td>${proveedor.telefono}</td>
+            <td>${proveedor.correo}</td>
+            <td><button type="button" class="btn btn-primary proveedor-btn" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#proveedor_modal"
+                    data-proveedor='${JSON.stringify(proveedor)}'>
+                    Editar
+                </button></td>
+        </tr>`;
+    });
 }
 
 // Evento al dar click al botón Agregar
@@ -112,6 +213,70 @@ document.getElementById('btn_add').addEventListener('click', async function(even
 })
 
 // Cargar los proveedores al iniciar la página
-document.addEventListener('DOMContentLoaded', () => {
-    cargarProveedores()
+document.addEventListener('DOMContentLoaded', async () => {
+    generarTablaProveedores()
+
+    const proveedoresProcesados = await obtenerProveedoresCompletos();
+    if (proveedoresProcesados) {
+        generarTablaProveedores(proveedoresProcesados);
+    }
 })
+
+// Declarar los botones de editar
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('proveedor-btn')) {
+        const proveedorData = JSON.parse(e.target.getAttribute('data-proveedor'));
+        cargarDatosEnModal(proveedorData);
+    }
+});
+
+// Función para cargar datos en el modal
+function cargarDatosEnModal(proveedor) {
+    // Campos no editables (solo lectura)
+    document.getElementById('edit_id_proveedor').value = proveedor.id_proveedor;
+    document.getElementById('edit_id_display').value = proveedor.id_proveedor;
+    
+    // Campos editables
+    document.getElementById('edit_nombre').value = proveedor.nombre;
+    document.getElementById('edit_empresa').value = proveedor.empresa;
+    document.getElementById('edit_direccion').value = proveedor.direccion;
+    document.getElementById('edit_telefono').value = proveedor.telefono;
+    document.getElementById('edit_email').value = proveedor.correo;
+}
+
+// Función para guardar cambios
+document.getElementById('btn_guardar_cambios').addEventListener('click', async function() {
+    const id_proveedor = document.getElementById('edit_id_proveedor').value;
+    const nombre = document.getElementById('edit_nombre').value;
+    const empresa = document.getElementById('edit_empresa').value;
+    const direccion = document.getElementById('edit_direccion').value;
+    const telefono = document.getElementById('edit_telefono').value;
+    const correo = document.getElementById('edit_email').value;
+
+    // Validar campos requeridos
+    if (!nombre || !empresa || !direccion || !telefono || !correo) {
+        alert('Por favor, complete todos los campos obligatorios');
+        return;
+    }
+
+    // Actualizar en Supabase
+    const { data, error } = await supabase
+        .from('proveedores')
+        .update({ 
+            nombre: nombre, 
+            empresa: empresa, 
+            direccion: direccion, 
+            telefono: telefono,
+            correo: correo 
+        })
+        .eq('id_proveedor', id_proveedor);
+
+    if (error) {
+        console.error('Error al actualizar:', error);
+        alert('Error al actualizar el proveedor: ' + error.message);
+    } else {
+        alert('proveedor actualizado correctamente');
+        generarTablaProveedores();
+        bootstrap.Modal.getInstance(document.getElementById('proveedor_modal')).hide();
+    }
+});

@@ -15,15 +15,23 @@ main {
 }
 
 /*--- CONTENIDO PRINCIPAL ---*/
-/* Recuadro del formulario */
-#formulario {
+h1 {
+    font-weight: bold;
+    color: #7B7B7B;
+}
+
+/* botón del acordeón */
+.accordion-button {
+    border-radius: 10px;
+}
+/* Recuadro del acordeón */
+.accordion-body {
     background-color: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(5px);
     border: 1px solid #ccc;
-    border-radius: 10px;
+    border-radius: 5px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    animation: fadeInUp 0.8s ease-out;
-    padding: 20px;
+    animation: fadeInUp 0.6s ease-out;
 }
 
 /* Animaciones */
@@ -52,12 +60,6 @@ main {
     box-shadow: 0 0 5px rgba(143, 199, 74, 0.5);
 }
 
-/* Etiquetas */
-.form-label {
-    padding: 0 16px;
-    font-weight: 500;
-}
-
 /* Eliminar flechas de inputs numericos */
 .no-arrows::-webkit-outer-spin-button,
 .no-arrows::-webkit-inner-spin-button {
@@ -67,15 +69,23 @@ main {
 
 /* Botón formulario */
 .btn {
-    border: 1px solid #8FC74A;
-    color: white;
-    background-color: #8FC74A;
+    border: 2px solid #8FC74A;
+    color: #8FC74A;
+    background-color: transparent;
     font-weight: bold;
-    border-radius: 50px;
-    padding: 12px 20px;
+    border-radius: 20px;
+    padding: 10px 20px;
     text-transform: uppercase;
     transition: all 0.3s ease;
-    font-size: 1rem;
+    font-size: 0.9rem;
+}
+
+.proveedor-btn {
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    border-radius: 10px;
+    background-color: transparent;
+    color: black;
 }
 
 .btn:hover {
@@ -89,22 +99,36 @@ main {
     box-shadow: 0 0 10px rgba(143, 199, 74, 0.5);
 }
 
+/* Tablas */
+.table {
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.table th {
+    background-color: #f1f1f1;
+    text-align: center;
+    font-weight: bold;
+}
+
+.table td {
+    text-align: center;
+}
+
+.filtro {
+    font-weight: bold;
+}
+
 /* Media queries */
 @media (max-width: 1024px) {
     .form-label {
         padding: 0;
     }
-
-    #formulario {
-        margin-top: 10px;
-    }
 }
 
 @media (max-width: 768px) {
-    .card-body {
-        padding: 15px;
-    }
-
     .btn {
         width: 100%;
     }
@@ -113,10 +137,6 @@ main {
 @media (max-width: 430px) {
     .info {
         font-size: small;
-    }
-
-    .form-label {
-        font-size: 0.8rem;
     }
 
     .form-control, .form-select {
