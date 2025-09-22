@@ -60,6 +60,13 @@ h1 {
     box-shadow: 0 0 5px rgba(143, 199, 74, 0.5);
 }
 
+/* Eliminar flechas de inputs numericos */
+.no-arrows::-webkit-outer-spin-button,
+.no-arrows::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 /* Botón formulario */
 .btn {
     border: 2px solid #8FC74A;

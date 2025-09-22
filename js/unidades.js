@@ -334,10 +334,33 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
     const anio = document.getElementById('edit_anio').value;
     const descripcion = document.getElementById('edit_descripcion').value;
 
+    // Referencias para validación
+    const nombreIn = document.getElementById('edit_nombre');
+    const modeloIn = document.getElementById('edit_modelo');
+    const anioIn = document.getElementById('edit_anio');
+    const descripcionIn = document.getElementById('edit_descripcion');
+
+    const error_nombre = document.getElementById('error-editNombre');
+    const error_modelo = document.getElementById('error-editModelo');
+    const error_año = document.getElementById('error-editAnio');
+    const error_descripcion = document.getElementById('error-editDescripcion');
+
+    // Validaciones
+    validarText(nombreIn, error_nombre)
+    validarText(modeloIn, error_modelo)
+    validarAño(anioIn, error_año)
+    validarText(descripcionIn, error_descripcion)
+
     // Validar campos requeridos
     if (!nombre || !modelo || !anio || !descripcion) {
         alert('Por favor, complete todos los campos obligatorios');
         return;
+    }
+
+    const campos = document.querySelectorAll('input')
+    if (!validarCamposInvalidos(campos)) {
+        alert('Corrige los errores antes de guardar.')
+        return
     }
 
     // Actualizar en Supabase

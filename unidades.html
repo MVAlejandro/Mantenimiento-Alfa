@@ -60,7 +60,7 @@
                                         </div>
                                         <div class="unidad col-md-2">
                                             <label for="año" class="m-1">Año</label>
-                                            <input type="text" id="año" class="form-control" placeholder="Año">
+                                            <input type="number" id="año" class="form-control no-arrows" placeholder="Año">
                                             <p class="error invalid-feedback" id="error-año" style="color: red;"></p>
                                         </div>
                                     </div>
@@ -187,6 +187,7 @@
                                 <div class="col">
                                     <label for="edit_nombre" class="form-label">Nombre *</label>
                                     <input type="text" class="form-control" id="edit_nombre" required>
+                                    <p class="error invalid-feedback" id="error-editNombre" style="color: red;"></p>
                                 </div>
                             </div>
                             
@@ -194,10 +195,12 @@
                                 <div class="col-md-6">
                                     <label for="edit_modelo" class="form-label">Modelo *</label>
                                     <input type="text" class="form-control" id="edit_modelo" required>
+                                    <p class="error invalid-feedback" id="error-editModelo" style="color: red;"></p>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="edit_anio" class="form-label">Año *</label>
-                                    <input type="text" class="form-control" id="edit_anio" required>
+                                    <input type="number" class="form-control no-arrows" id="edit_anio" required>
+                                    <p class="error invalid-feedback" id="error-editAnio" style="color: red;"></p>
                                 </div>
                             </div>
 
@@ -205,6 +208,7 @@
                                 <div class="col">
                                     <label for="edit_descripcion" class="form-label">Descripción *</label>
                                     <textarea class="form-control" id="edit_descripcion" rows="4"></textarea>
+                                    <p class="error invalid-feedback" id="error-editDescripcion" style="color: red;"></p>
                                 </div>
                             </div>
                             

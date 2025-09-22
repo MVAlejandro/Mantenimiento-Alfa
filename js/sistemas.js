@@ -203,10 +203,27 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
     const tipo = document.getElementById('edit_tipo').value;
     const descripcion = document.getElementById('edit_descripcion').value;
 
+    // Referencias para validación
+    const tipoIn = document.getElementById('edit_tipo');
+    const descripcionIn = document.getElementById('edit_descripcion');
+
+    const error_tipo = document.getElementById('error-editTipo');
+    const error_descripcion = document.getElementById('error-editDescripcion');
+
+    // Validaciones
+    validarText(tipoIn, error_tipo)
+    validarText(descripcionIn, error_descripcion)
+
     // Validar campos requeridos
     if (!tipo || !descripcion) {
         alert('Por favor, complete todos los campos obligatorios');
         return;
+    }
+
+    const campos = document.querySelectorAll('input')
+    if (!validarCamposInvalidos(campos)) {
+        alert('Corrige los errores antes de guardar.')
+        return
     }
 
     // Actualizar en Supabase

@@ -253,10 +253,36 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
     const telefono = document.getElementById('edit_telefono').value;
     const correo = document.getElementById('edit_email').value;
 
+    // Referencias para validación
+    const nombreIn = document.getElementById('edit_nombre');
+    const empresaIn = document.getElementById('edit_empresa');
+    const direccionIn = document.getElementById('edit_direccion');
+    const telefonoIn = document.getElementById('edit_telefono');
+    const correoIn = document.getElementById('edit_email');
+
+    const error_nombre = document.getElementById('error-editNombre');
+    const error_empresa = document.getElementById('error-editEmpresa');
+    const error_direccion = document.getElementById('error-editDireccion');
+    const error_telefono = document.getElementById('error-editTelefono');
+    const error_correo = document.getElementById('error-editEmail');
+
+    // Validaciones
+    validarNombre(nombreIn, error_nombre);
+    validarText(empresaIn, error_empresa);
+    validarText(direccionIn, error_direccion);
+    validarTelefono(telefonoIn, error_telefono);
+    validarEmail(correoIn, error_correo);
+
     // Validar campos requeridos
     if (!nombre || !empresa || !direccion || !telefono || !correo) {
         alert('Por favor, complete todos los campos obligatorios');
         return;
+    }
+
+    const campos = document.querySelectorAll('input')
+    if (!validarCamposInvalidos(campos)) {
+        alert('Corrige los errores antes de guardar.')
+        return
     }
 
     // Actualizar en Supabase

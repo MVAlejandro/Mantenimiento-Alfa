@@ -375,10 +375,27 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
     const periodicidad = document.getElementById('edit_periodicidad').value;
     const descripcion = document.getElementById('edit_descripcion').value;
 
+    // Referencias para validación
+    const nombreIn = document.getElementById('edit_nombre');
+    const descripcionIn = document.getElementById('edit_descripcion');
+
+    const error_nombre = document.getElementById('edit_nombre');
+    const error_descripcion = document.getElementById('error-editDescripcion');
+
+    // Validaciones
+    validarText(nombreIn, error_nombre);
+    validarText(descripcionIn, error_descripcion);
+
     // Validar campos requeridos
     if (!nombre || !unidad || !sistema || !periodicidad || !descripcion) {
         alert('Por favor, complete todos los campos obligatorios');
         return;
+    }
+
+    const campos = document.querySelectorAll('input')
+    if (!validarCamposInvalidos(campos)) {
+        alert('Corrige los errores antes de guardar.')
+        return
     }
 
     // Actualizar en Supabase

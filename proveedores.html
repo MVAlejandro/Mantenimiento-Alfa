@@ -161,6 +161,7 @@
                                 <div class="col">
                                     <label for="edit_nombre" class="form-label">Nombre *</label>
                                     <input type="text" class="form-control" id="edit_nombre" required>
+                                    <p class="error invalid-feedback" id="error-editNombre" style="color: red;"></p>
                                 </div>
                             </div>
 
@@ -168,6 +169,7 @@
                                 <div class="col">
                                     <label for="edit_empresa" class="form-label">Empresa *</label>
                                     <input type="text" class="form-control" id="edit_empresa" required>
+                                    <p class="error invalid-feedback" id="error-editEmpresa" style="color: red;"></p>
                                 </div>
                             </div>
                             
@@ -175,17 +177,20 @@
                                 <div class="col">
                                     <label for="edit_direccion" class="form-label">Dirección *</label>
                                     <textarea class="form-control" id="edit_direccion" rows="2"></textarea>
+                                    <p class="error invalid-feedback" id="error-editDireccion" style="color: red;"></p>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-md-4">
                                     <label for="edit_telefono" class="form-label">Teléfono *</label>
-                                    <input type="text" class="form-control" id="edit_telefono" required>
+                                    <input type="number" class="form-control no-arrows" id="edit_telefono" required>
+                                    <p class="error invalid-feedback" id="error-editTelefono" style="color: red;"></p>
                                 </div>
                                 <div class="col-md-8">
                                     <label for="edit_email" class="form-label">Email *</label>
-                                    <input type="text" class="form-control" id="edit_email" required>
+                                    <input type="email" class="form-control" id="edit_email" required>
+                                    <p class="error invalid-feedback" id="error-editEmail" style="color: red;"></p>
                                 </div>
                             </div>
                         </form>
