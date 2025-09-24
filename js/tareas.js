@@ -330,7 +330,6 @@ document.getElementById('btn_asignar').addEventListener('click', async () => {
 
         proveedorSeleccionado = proveedorExterno;
     } else {
-        // Si el responsable es un proveedor interno (1–5)
         proveedorSeleccionado = responsable;
     }
 
@@ -352,14 +351,89 @@ document.getElementById('btn_asignar').addEventListener('click', async () => {
         return;
     }
 
-    // Insertar en calendario con estado "Pendiente" por defecto
+    // Obtener periodicidad y repeticiones
+    const { data: tareaData, error: tareaError } = await supabase
+        .from('tareas')
+        .select('id_periodicidad')
+        .eq('id_tarea', idTarea)
+        .single();
+
+    if (tareaError || !tareaData) {
+        alert('No se pudo obtener la tarea.');
+        return;
+    }
+
+    const { data: periodicidadData, error: periodicidadError } = await supabase
+        .from('periodicidad')
+        .select('nombre, repeticiones')
+        .eq('id_periodicidad', tareaData.id_periodicidad)
+        .single();
+
+    if (periodicidadError || !periodicidadData) {
+        alert('No se pudo obtener la periodicidad.');
+        return;
+    }
+
+    // Función para formatear fecha en YYYY-MM-DD sin afectar por zona horaria
+    function formatearFecha(fecha) {
+        const year = fecha.getFullYear();
+        const month = String(fecha.getMonth() + 1).padStart(2, '0');
+        const day = String(fecha.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Función para generar fechas periódicas
+    function generarFechasPeriodicas(fechaInicial, periodicidad, repeticiones) {
+        const fechas = [];
+        // Parsear la fecha correctamente desde string 'YYYY-MM-DD'
+        let [year, month, day] = fechaInicial.split('-').map(Number);
+        let fecha = new Date(year, month - 1, day);
+        fecha.setHours(0, 0, 0, 0); // Normaliza la hora para evitar desfases
+
+        for (let i = 0; i < repeticiones; i++) {
+            fechas.push(new Date(fecha));
+
+            if (['mensual', 'bimestral', 'trimestral', 'semestral', 'anual'].includes(periodicidad.nombre.toLowerCase())) {
+                const mesesASumar = {
+                    mensual: 1,
+                    bimestral: 2,
+                    trimestral: 3,
+                    semestral: 6,
+                    anual: 12
+                }[periodicidad.nombre.toLowerCase()];
+                fecha.setMonth(fecha.getMonth() + mesesASumar);
+            } else {
+                const diasASumar = {
+                    diario: 1,
+                    semanal: 7,
+                    quincenal: 15
+                }[periodicidad.nombre.toLowerCase()] || 1;
+                fecha.setDate(fecha.getDate() + diasASumar);
+            }
+
+            fecha.setHours(0, 0, 0, 0);
+        }
+
+        return fechas;
+    }
+
+    // Generar fechas programadas
+    const fechasProgramadas = generarFechasPeriodicas(fechaProgramada, periodicidadData, periodicidadData.repeticiones);
+
+    // Preparar registros para insertar en calendario
+    const registrosCalendario = fechasProgramadas.map(fecha => ({
+        id_tarea: idTarea,
+        fecha_programada: formatearFecha(fecha)
+    }));
+
+    // Insertar todas las fechas generadas en calendario
     const { error: errorCal } = await supabase
         .from('calendario')
-        .insert([{ id_tarea: idTarea, fecha_programada: fechaProgramada }]);
+        .insert(registrosCalendario);
 
     if (errorCal) {
-        console.error('Error al insertar en calendario:', errorCal);
-        alert('No se pudo registrar la fecha en el calendario.');
+        console.error('Error al insertar fechas en calendario:', errorCal);
+        alert('No se pudo registrar las fechas en el calendario.');
         return;
     }
 

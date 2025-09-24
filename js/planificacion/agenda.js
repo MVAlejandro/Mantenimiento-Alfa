@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarDepartamentos('departamentoP')
 })
 
-// Cargar solo las tareas que tienen proveedor asignado desde Supabase con el filtro aplicado
 async function cargarTareas() {
     const departamentoFiltro = document.getElementById('departamentoP').value;
     
@@ -40,11 +39,12 @@ async function cargarTareas() {
         // Obtener tareas que tienen proveedor asignado
         const { data: tareasConProveedor, error: errorProveedor } = await supabase
             .from('tarea_proveedor')
-            .select('id_tarea')
+            .select('id_tarea');
             
         if (errorProveedor) throw errorProveedor;
         
         if (tareasConProveedor.length === 0) {
+            tasks = [];
             return [];
         }
         
@@ -79,30 +79,20 @@ async function cargarTareas() {
         if (errorTareas) throw errorTareas;
         
         // Convertir el formato de Supabase al formato que necesita el Gantt
-        const tareasProcesadas = tareasData.map((tarea) => {
-            // Obtener el primer proveedor asignado (si existe)
+        const tareasProcesadas = tareasData.flatMap(tarea => {
             const proveedor = tarea.tarea_proveedor && tarea.tarea_proveedor[0] 
                 ? tarea.tarea_proveedor[0].proveedores.nombre 
                 : 'Sin asignar';
                 
-            // Obtener la fecha programada del calendario (última entrada)
-            const fechaProgramada = tarea.calendario && tarea.calendario.length > 0
-                ? tarea.calendario[tarea.calendario.length - 1].fecha_programada
-                : new Date().toISOString().split('T')[0];
-
-            const estado = tarea.calendario && tarea.calendario.length > 0
-                ? tarea.calendario[tarea.calendario.length - 1].estado
-                : 'Pendiente';
-
-            // Obtener el departamento de la unidad
             const departamento = tarea.unidades?.id_empleado?.departamentos?.nombre || 'N/A';
             const idDepartamento = tarea.unidades?.id_empleado?.departamentos?.id_departamento || null;
 
-            return {
-                id: 'T' + tarea.id_tarea,
+            // Generar una fila por cada registro de calendario
+            return tarea.calendario.map(cal => ({
+                id: 'T' + tarea.id_tarea + '_' + cal.fecha_programada,
                 name: tarea.nombre,
-                start: fechaProgramada,
-                end: fechaProgramada,
+                start: cal.fecha_programada,
+                end: cal.fecha_programada,
                 description: tarea.descripcion,
                 unidad: tarea.unidades ? tarea.unidades.nombre : 'N/A',
                 departamento: departamento,
@@ -111,18 +101,15 @@ async function cargarTareas() {
                 responsable: proveedor,
                 periodicidad: tarea.periodicidad ? tarea.periodicidad.nombre : 'N/A',
                 progress: 100,
-                estado: estado,
+                estado: cal.estado,
                 id_original: tarea.id_tarea
-            };
+            }));
         });
         
         // Aplicar filtro de departamento
         let tareasFiltradas = tareasProcesadas;
-        
         if (departamentoFiltro && departamentoFiltro !== '0') {
-            tareasFiltradas = tareasProcesadas.filter(t => 
-                t.id_departamento == departamentoFiltro
-            );
+            tareasFiltradas = tareasProcesadas.filter(t => t.id_departamento == departamentoFiltro);
         }
         
         // Mantener tasks actualizado
@@ -294,6 +281,8 @@ function obtenerEstadoTarea(idTarea) {
 
 // Mostrar detalles de la tarea en el modal
 function abrirModal(task) {
+    console.log(task);
+    
     const eventoModal = document.getElementById('evento_modal');
     
     if (eventoModal) {

@@ -32,7 +32,7 @@ export async function generarGestion() {
     const finInput = document.getElementById('fechaFinG').value;
     const departamentoFiltro = document.getElementById('departamentoG').value;
     
-    // Verificar si los filtros están vacías
+    // Verificar si los filtros están vacíos
     if (!inicioInput && !finInput && departamentoFiltro === '0') {
         generarTablaGestion([]);
         return;
@@ -69,32 +69,29 @@ export async function generarGestion() {
 
         if (error) throw error;
 
-        // Procesar datos y obtener la última entrada de calendario por tarea
-        const tareasProcesadas = tareasData.map(tarea => {
-            const ultimoCalendario = tarea.calendario && tarea.calendario.length > 0 
-                ? tarea.calendario[tarea.calendario.length - 1] 
-                : null;
-                
-            // Obtener proveedor de la tarea
+        // Expandir cada registro del calendario
+        const tareasProcesadas = tareasData.flatMap(tarea => {
             const proveedor = tarea.tarea_proveedor && tarea.tarea_proveedor.length > 0
                 ? tarea.tarea_proveedor[0].proveedores.nombre
                 : 'Sin asignar';
 
-            // Obtener departamento de la unidad
             const departamento = tarea.unidades?.id_empleado?.departamentos?.nombre || 'N/A';
 
-            return {
-                id_tarea: tarea.id_tarea,
-                nombre: tarea.nombre,
-                id_unidad: tarea.unidades ? tarea.unidades.nombre : tarea.id_unidad,
-                departamento: departamento,
-                id_proveedor: proveedor,
-                fecha_programada: ultimoCalendario ? ultimoCalendario.fecha_programada : null,
-                estado: ultimoCalendario ? ultimoCalendario.estado : 'Pendiente'
-            };
+            // Generar un registro por cada fila del calendario pendiente
+            return tarea.calendario
+                .filter(cal => cal.estado === 'Pendiente') // Filtrar solo pendientes
+                .map(cal => ({
+                    id_tarea: tarea.id_tarea,
+                    nombre: tarea.nombre,
+                    id_unidad: tarea.unidades ? tarea.unidades.nombre : tarea.id_unidad,
+                    departamento,
+                    id_proveedor: proveedor,
+                    fecha_programada: cal.fecha_programada,
+                    estado: cal.estado
+                }));
         });
 
-        // Filtrar por fechas si se especificaron
+        // Filtrar por fechas y departamento
         let tareasFiltradas = tareasProcesadas;
         
         if (inicioInput || finInput || departamentoFiltro !== '0') {

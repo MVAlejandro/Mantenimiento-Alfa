@@ -32,7 +32,7 @@ export async function generarSupervision() {
     const finInput = document.getElementById('fechaFinS').value;
     const departamentoFiltro = document.getElementById('departamentoS').value;
     
-    // Verificar si los filtros están vacías
+    // Verificar si los filtros están vacíos
     if (!inicioInput && !finInput && departamentoFiltro === '0') {
         generarTablaSuper([]);
         return;
@@ -42,7 +42,7 @@ export async function generarSupervision() {
     const fin = finInput ? new Date(finInput) : new Date(NaN);
 
     try {
-        // Obtener tareas con proveedor asignado y fechas del calendario
+        // Obtener tareas con proveedor asignado y calendario
         const { data: tareasData, error } = await supabase
             .from('tareas')
             .select(`
@@ -68,32 +68,26 @@ export async function generarSupervision() {
 
         if (error) throw error;
 
-        // Procesar datos y obtener la última entrada de calendario por tarea
-        const tareasProcesadas = tareasData.map(tarea => {
-            const ultimoCalendario = tarea.calendario && tarea.calendario.length > 0 
-                ? tarea.calendario[tarea.calendario.length - 1] 
-                : null;
-                
-            // Obtener proveedor de la tarea
+        // Expandir cada calendario como fila
+        const tareasProcesadas = tareasData.flatMap(tarea => {
             const proveedor = tarea.tarea_proveedor && tarea.tarea_proveedor.length > 0
                 ? tarea.tarea_proveedor[0].proveedores.nombre
                 : 'Sin asignar';
 
-            // Obtener departamento de la unidad
             const departamento = tarea.unidades?.id_empleado?.departamentos?.nombre || 'N/A';
 
-            return {
+            return tarea.calendario.map(cal => ({
                 id_tarea: tarea.id_tarea,
                 nombre: tarea.nombre,
                 id_unidad: tarea.unidades ? tarea.unidades.nombre : tarea.id_unidad,
-                departamento: departamento,
+                departamento,
                 id_proveedor: proveedor,
-                fecha_programada: ultimoCalendario ? ultimoCalendario.fecha_programada : null,
-                estado: ultimoCalendario ? ultimoCalendario.estado : 'Pendiente'
-            };
+                fecha_programada: cal.fecha_programada,
+                estado: cal.estado
+            }));
         });
 
-        // Filtrar por fechas si se especificaron
+        // Filtrar por fechas y departamento
         let tareasFiltradas = tareasProcesadas;
         
         if (inicioInput || finInput || departamentoFiltro !== '0') {
@@ -205,40 +199,35 @@ export async function generarReporte() {
 
         if (error) throw error;
 
-        // Procesar datos y obtener la información completa
-        const tareasProcesadas = tareasData.map(tarea => {
-            const ultimoCalendario = tarea.calendario && tarea.calendario.length > 0 
-                ? tarea.calendario[tarea.calendario.length - 1] 
-                : null;
-                
+        // Expandir cada registro del calendario
+        const tareasProcesadas = tareasData.flatMap(tarea => {
             const proveedor = tarea.tarea_proveedor && tarea.tarea_proveedor.length > 0
                 ? tarea.tarea_proveedor[0].proveedores.nombre
                 : 'Sin asignar';
 
-            // Obtener refacciones utilizadas
             const refacciones = tarea.tarea_refaccion && tarea.tarea_refaccion.length > 0
                 ? tarea.tarea_refaccion.map(tr => 
                     `${tr.refacciones.nombre} (${tr.cantidad})`
                   ).join(', ')
                 : 'Ninguna';
 
-            // Obtener departamento de la unidad
             const departamento = tarea.unidades?.id_empleado?.departamentos?.nombre || 'N/A';
 
-            return {
-                fecha_programada: ultimoCalendario ? ultimoCalendario.fecha_programada : null,
-                fecha_realizada: ultimoCalendario ? ultimoCalendario.fecha_realizada : null,
+            // Generar un registro por cada fila del calendario
+            return tarea.calendario.map(cal => ({
+                fecha_programada: cal.fecha_programada,
+                fecha_realizada: cal.fecha_realizada,
                 nombre: tarea.nombre,
                 id_unidad: tarea.unidades ? tarea.unidades.nombre : tarea.id_unidad,
-                departamento: departamento,
+                departamento,
                 id_proveedor: proveedor,
-                estado: ultimoCalendario ? ultimoCalendario.estado : 'Pendiente',
-                refacciones: refacciones,
-                observaciones: ultimoCalendario ? ultimoCalendario.observaciones : ''
-            };
+                estado: cal.estado,
+                refacciones,
+                observaciones: cal.observaciones || ''
+            }));
         });
 
-        // Filtrar por fechas, estado Y departamento
+        // Filtrar por fechas, estado y departamento
         let tareasFiltradas = tareasProcesadas;
         
         if (inicioInput || finInput || estadoFiltro !== '0' || departamentoFiltro !== '0') {
