@@ -8,7 +8,8 @@ import {validarText, validarId, validarTelefono, validarEmail, validarNombre} fr
 async function obtenerProveedoresCompletos() {
     const { data, error } = await supabase
         .from('proveedores')
-        .select('*');
+        .select('*')
+        .not('id_proveedor', 'in', '(1,2,3,4,5)');
     
     if (error) {
         console.error('Error obteniendo proveedores:', error);
@@ -210,6 +211,10 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     // Insertar en Supabase
     const nuevoProveedor = {id_proveedor, nombre, empresa, direccion, telefono, correo};
     await insertarProveedor(nuevoProveedor)
+
+    // Recarga la tabla con los datos actualizados
+    const proveedoresActualizados = await obtenerProveedoresCompletos();
+    generarTablaProveedores(proveedoresActualizados);
 })
 
 // Cargar los proveedores al iniciar la página
@@ -307,3 +312,39 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
         bootstrap.Modal.getInstance(document.getElementById('proveedor_modal')).hide();
     }
 });
+
+// Eliminar entrada al dar click en el botón del segundo modal
+document.getElementById('btn_eliminar_entrada').addEventListener('click', async () => {
+    const idProveedor = document.getElementById('edit_id_proveedor').value;
+
+    if (!idProveedor) {
+        alert('No se pudo obtener el ID del proveedor a eliminar.');
+        return;
+    }
+
+    const { error } = await supabase
+        .from('proveedores')
+        .delete()
+        .eq('id_proveedor', idProveedor);
+
+    if (error) {
+        console.error('Error eliminando proveedor:', error);
+        alert('Ocurrió un error al eliminar el proveedor.');
+        return;
+    }
+
+    // Cerrar los modales
+    const consultaModal = bootstrap.Modal.getInstance(document.getElementById('consulta_modal'));
+    if (consultaModal) consultaModal.hide();
+
+    const proveedorModal = bootstrap.Modal.getInstance(document.getElementById('proveedor_modal'));
+    if (proveedorModal) proveedorModal.hide();
+
+    // Recarga la tabla con los datos actualizados
+    const proveedoresActualizados = await obtenerProveedoresCompletos();
+    generarTablaProveedores(proveedoresActualizados);
+
+    // Mensaje de éxito
+    alert('Proveedor eliminad correctamente.');
+});
+

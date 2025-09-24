@@ -204,6 +204,10 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     // Insertar en Supabase
     const nuevaRefaccion = {id_refaccion, nombre, costo_unitario, unidad_medida, descripcion};
     await insertarRefaccion(nuevaRefaccion)
+
+    // Recarga la tabla con los datos actualizados
+    const refaccionesActualizadas = await obtenerRefaccionesCompletas();
+    generarTablaRefacciones(refaccionesActualizadas);
 })
 
 // Cargar las refacciones al iniciar la página
@@ -271,4 +275,39 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
         generarTablaRefacciones(refaccionesActualizadas);
         bootstrap.Modal.getInstance(document.getElementById('refaccion_modal')).hide();
     }
+});
+
+// Eliminar entrada al dar click en el botón del segundo modal
+document.getElementById('btn_eliminar_entrada').addEventListener('click', async () => {
+    const idRefaccion = document.getElementById('edit_id_refaccion').value;
+
+    if (!idRefaccion) {
+        alert('No se pudo obtener el ID de la refacción a eliminar.');
+        return;
+    }
+
+    const { error } = await supabase
+        .from('refacciones')
+        .delete()
+        .eq('id_refaccion', idRefaccion);
+
+    if (error) {
+        console.error('Error eliminando refacción:', error);
+        alert('Ocurrió un error al eliminar la refacción.');
+        return;
+    }
+
+    // Cerrar los modales
+    const consultaModal = bootstrap.Modal.getInstance(document.getElementById('consulta_modal'));
+    if (consultaModal) consultaModal.hide();
+
+    const refaccionModal = bootstrap.Modal.getInstance(document.getElementById('refaccion_modal'));
+    if (refaccionModal) refaccionModal.hide();
+
+    // Recarga la tabla con los datos actualizados
+    const refaccionesActualizadas = await obtenerRefaccionesCompletas();
+    generarTablaRefacciones(refaccionesActualizadas);
+
+    // Mensaje de éxito
+    alert('Refacción eliminada correctamente.');
 });

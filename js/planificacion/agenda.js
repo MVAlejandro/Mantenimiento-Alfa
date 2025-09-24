@@ -7,8 +7,35 @@ let ganttChart;
 let calendar;
 let calendarInicializado = false;
 
-// Cargar solo las tareas que tienen proveedor asignado desde Supabase
+// Función para cargar departamentos en el select
+async function cargarDepartamentos(deptoElement) {
+    const { data, error } = await supabase.from('departamentos').select('id_departamento, nombre');
+
+    const selectDepto = document.getElementById(deptoElement);
+    selectDepto.innerHTML = '<option value="0">Todos</option>';
+
+    if (error) {
+        console.error("Error cargando departamentos:", error);
+        return;
+    }
+
+    data.forEach(depto => {
+        const option = document.createElement('option');
+        option.value = depto.id_departamento;
+        option.textContent = depto.nombre;
+        selectDepto.appendChild(option);
+    });
+}
+
+// Cargar los departamentos al iniciar la página
+document.addEventListener('DOMContentLoaded', () => {
+    cargarDepartamentos('departamentoP')
+})
+
+// Cargar solo las tareas que tienen proveedor asignado desde Supabase con el filtro aplicado
 async function cargarTareas() {
+    const departamentoFiltro = document.getElementById('departamentoP').value;
+    
     try {
         // Obtener tareas que tienen proveedor asignado
         const { data: tareasConProveedor, error: errorProveedor } = await supabase
@@ -18,42 +45,41 @@ async function cargarTareas() {
         if (errorProveedor) throw errorProveedor;
         
         if (tareasConProveedor.length === 0) {
-            tasks = [];
-            return;
+            return [];
         }
         
         // Obtener id de tareas con proveedor
         const tareaIds = tareasConProveedor.map(tp => tp.id_tarea);
         
-        // Obtener información completa de las tareas con sus fechas del calendario
+        // Obtener información completa de las tareas
         const { data: tareasData, error: errorTareas } = await supabase
-        .from('tareas')
-        .select(`
-            *,
-            unidades:id_unidad(
-                nombre,
-                id_empleado (
+            .from('tareas')
+            .select(`
+                *,
+                unidades:id_unidad(
                     nombre,
-                    departamentos (nombre)
+                    id_empleado (
+                        nombre,
+                        departamentos (nombre, id_departamento)
+                    )
+                ),
+                sistemas:id_sistema(tipo),
+                periodicidad:id_periodicidad(nombre),
+                tarea_proveedor!tarea_proveedor_id_tarea_fkey (
+                    id_proveedor,
+                    proveedores (id_proveedor, nombre)
+                ),
+                calendario!calendario_id_tarea_fkey (
+                    fecha_programada,
+                    estado
                 )
-            ),
-            sistemas:id_sistema(tipo),
-            periodicidad:id_periodicidad(nombre),
-            tarea_proveedor!tarea_proveedor_id_tarea_fkey (
-                id_proveedor,
-                proveedores (id_proveedor, nombre)
-            ),
-            calendario!calendario_id_tarea_fkey (
-                fecha_programada,
-                estado
-            )
-        `)
-        .in('id_tarea', tareaIds);
+            `)
+            .in('id_tarea', tareaIds);
             
         if (errorTareas) throw errorTareas;
         
         // Convertir el formato de Supabase al formato que necesita el Gantt
-        tasks = tareasData.map((tarea) => {
+        const tareasProcesadas = tareasData.map((tarea) => {
             // Obtener el primer proveedor asignado (si existe)
             const proveedor = tarea.tarea_proveedor && tarea.tarea_proveedor[0] 
                 ? tarea.tarea_proveedor[0].proveedores.nombre 
@@ -66,10 +92,11 @@ async function cargarTareas() {
 
             const estado = tarea.calendario && tarea.calendario.length > 0
                 ? tarea.calendario[tarea.calendario.length - 1].estado
-                : 'Pendiente'; // Estado por defecto
+                : 'Pendiente';
 
             // Obtener el departamento de la unidad
             const departamento = tarea.unidades?.id_empleado?.departamentos?.nombre || 'N/A';
+            const idDepartamento = tarea.unidades?.id_empleado?.departamentos?.id_departamento || null;
 
             return {
                 id: 'T' + tarea.id_tarea,
@@ -79,18 +106,34 @@ async function cargarTareas() {
                 description: tarea.descripcion,
                 unidad: tarea.unidades ? tarea.unidades.nombre : 'N/A',
                 departamento: departamento,
+                id_departamento: idDepartamento, // Para filtrar
                 sistema: tarea.sistemas ? tarea.sistemas.tipo : 'N/A',
                 responsable: proveedor,
                 periodicidad: tarea.periodicidad ? tarea.periodicidad.nombre : 'N/A',
                 progress: 100,
                 estado: estado,
-                id_original: tarea.id_tarea // Guardar ID original para referencias
+                id_original: tarea.id_tarea
             };
         });
+        
+        // Aplicar filtro de departamento
+        let tareasFiltradas = tareasProcesadas;
+        
+        if (departamentoFiltro && departamentoFiltro !== '0') {
+            tareasFiltradas = tareasProcesadas.filter(t => 
+                t.id_departamento == departamentoFiltro
+            );
+        }
+        
+        // Mantener tasks actualizado
+        tasks = tareasFiltradas;
+        
+        return tareasFiltradas;
         
     } catch (error) {
         console.error('Error cargando tareas:', error);
         tasks = [];
+        return [];
     }
 }
 
@@ -133,11 +176,44 @@ document.getElementById('mes-tab')?.addEventListener('click', function() {
     cambiarView('Month')
 });
 
+// Función para aplicar filtro a ambos diagramas
+async function aplicarFiltro() {
+    try {
+        // Recargar tareas primero
+        await cargarTareas();
+        
+        // Recargar calendario
+        if (calendar) {
+            calendar.refetchEvents();
+        }
+        
+        // Recargar Gantt solo si hay tareas
+        if (ganttChart && tasks.length > 0) {
+            const ganttContainer = document.getElementById('gantt_diagrama');
+            if (ganttContainer) {
+                ganttContainer.innerHTML = '';
+                ganttChart = new Gantt(ganttContainer, tasks, {
+                    view_mode: 'Day',
+                    language: 'es'
+                });
+            }
+        } else if (tasks.length === 0) {
+            // Limpiar Gantt si no hay tareas
+            const ganttContainer = document.getElementById('gantt_diagrama');
+            if (ganttContainer) {
+                ganttContainer.innerHTML = '<p>No hay tareas para mostrar</p>';
+            }
+        }
+    } catch (error) {
+        console.error('Error aplicando filtro:', error);
+    }
+}
+
 // ---------- CALENDARIO ---------- //
 // Inicializar el calendario
 export async function generarCalendario() {
-    // Cargar tareas antes de inicializar
-    await cargarTareas();
+    // Cargar departamentos en el filtro
+    await cargarDepartamentos('departamentoP');
     
     const calendarEl = document.getElementById('calendario-element');
     if (calendarEl) {
@@ -149,7 +225,30 @@ export async function generarCalendario() {
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,listMonth'
             },
-            events: tareasParaCalendario(),
+            events: function(fetchInfo, successCallback, failureCallback) {
+                cargarTareas().then(tasks => {
+                    const eventos = tasks.map(task => {
+                        return {
+                            id: task.id,
+                            title: task.name,
+                            start: task.start,
+                            end: task.end,
+                            description: task.description,
+                            unidad: task.unidad,
+                            departamento: task.departamento,
+                            sistema: task.sistema,
+                            responsable: task.responsable,
+                            periodicidad: task.periodicidad,
+                            estado: task.estado,
+                            color: generarColor(task)
+                        };
+                    });
+                    successCallback(eventos);
+                }).catch(error => {
+                    console.error('Error cargando eventos:', error);
+                    successCallback([]);
+                });
+            },
             eventClick: function(info) {
                 const task = tasks.find(t => t.id === info.event.id);
                 if (task) {
@@ -157,34 +256,15 @@ export async function generarCalendario() {
                 }
                 info.jsEvent.preventDefault();
             },
-            // Hacer que los eventos del calendario no sean editables
             editable: false,
             eventResizableFromStart: false
         });
         calendar.render();
         calendarInicializado = true;
     }
-}
-
-// Convertir tareas a eventos de calendario
-function tareasParaCalendario() {
-    return tasks.map(task => {
-        return {
-            id: task.id,
-            title: task.name,
-            start: task.start,
-            end: task.end,
-            description: task.description,
-            unidad: task.unidad,
-            departamento: task.departamento,
-            sistema: task.sistema,
-            responsable: task.responsable,
-            periodicidad: task.periodicidad,
-            refacciones: task.refacciones,
-            estado: task.estado, 
-            color: generarColor(task) // Tomar el estado para dar el color
-        };
-    });
+    
+    // Botón de filtrar
+    document.getElementById('btn_genP').addEventListener('click', aplicarFiltro);
 }
 
 // Función para obtener color basado en el estado del calendario

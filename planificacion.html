@@ -39,15 +39,23 @@
                 <div class="tab-content" id="planeacionTabsContent">
                     <!-- Contenedor planeación -->
                     <div class="tab-pane fade show active" id="agenda" role="tabpanel">
-                        <div class="agenda-container">
-                            <div class="nav nav-pills mb-4" id="agendaTabs" role="tablist">
-                                <button class="nav-link active" id="calendario-tab" data-bs-toggle="pill" data-bs-target="#calendario" type="button" role="tab">Vista Calendario</button>
-                                <button class="nav-link" id="gantt-tab" data-bs-toggle="pill" data-bs-target="#gantt" type="button" role="tab">Vista Gantt</button>
+                        <div id="agenda-container">
+                            <h1>Planificación de Tareas</h1>
+                            <!-- Filtros -->
+                            <div id="filtrosP" class="row mt-5">
+                                <div class="col-12 col-md-3 ms-5">
+                                    <label for="departamentoP" class="form-label m-2">Departamento</label>
+                                    <select class="form-select" id="departamentoP">
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-8 d-flex align-items-center justify-content-end mt-2">
+                                    <button id="btn_genP" class="btn btn-primary m-2">Filtrar</button>
+                                </div>
                             </div>
-                            
+
                             <div class="tab-content" id="agendaTabsContent">
                                 <!-- Vista Calendario -->
-                                <div class="tab-pane fade show active" id="calendario" role="tabpanel">
+                                <div id="calendario">
                                     <div class="calendario_container mb-5">
                                         <div id="calendario-element">
 
@@ -55,7 +63,7 @@
                                     </div>
                                 </div>
                                 <!-- Vista Gantt -->
-                                <div class="tab-pane fade" id="gantt" role="tabpanel">
+                                <div id="gantt">
                                     <div id="gantt_container">
                                         <div class="controls btn-group">
                                             <div class="nav nav-pills" id="ganttTabs" role="tablist">
@@ -78,7 +86,7 @@
                         <div id="supervision-container">
                             <h1>Supervisión de Tareas</h1>
                             <!-- Filtros -->
-                            <div id="filtrosS" class="row d-flex">
+                            <div id="filtrosS" class="row d-flex mt-5">
                                 <div class="col">
                                     <label for="fechaInicioS" class="form-label m-2">Fecha inicio</label>
                                     <input type="date" id="fechaInicioS" class="form-control" placeholder="Fecha">
@@ -126,7 +134,7 @@
                         <div id="gestion-container">
                             <h1>Gestión de Tareas</h1>
                             <!-- Filtros -->
-                            <div id="filtrosG" class="row d-flex">
+                            <div id="filtrosG" class="row d-flex mt-5">
                                 <div class="col">
                                     <label for="fechaInicioG" class="m-2">Fecha inicio:</label>
                                     <input type="date" id="fechaInicioG" class="form-control" placeholder="Fecha">
@@ -172,7 +180,7 @@
                         <div id="reporte-container">
                             <h1>Reporte de Tareas</h1>
                             <!-- Filtros -->
-                            <div id="filtros" class="row d-flex">
+                            <div id="filtros" class="row d-flex mt-5">
                                 <div class="col">
                                     <label for="fechaInicioR" class="form-label m-2">Fecha inicio</label>
                                     <input type="date" id="fechaInicioR" class="form-control" placeholder="Fecha">
@@ -227,7 +235,7 @@
                 </div>
             </div>
         </div>
-     </main>
+    </main>
 
 
     <!-- Modal tarea-->
@@ -272,7 +280,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Refacciones Utilizadas</label>
-                            <div id="refacciones-container">
+                            <div id="refacciones-container" class="mb-4">
                                 
                             </div>
                             <button id="btn-addRef" type="button" class="btn btn-sm btn-outline-primary">+ Agregar Refacción</button>
@@ -302,7 +310,7 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.min.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
 <script src="./js/nav.js" type="module"></script>
-<script src="/js/verificacion.js" type="module"></script>
+<script src="./js/verificacion.js" type="module"></script>
 <script src="./js/planificacion.js" type="module"></script>
 </body>
 </html>

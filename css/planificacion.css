@@ -42,8 +42,9 @@ main {
     padding: 20px;
 }
 
-.agenda-container, .supervision-container, .gestion-container, .reporte-container {
+#agenda-container, #supervision-container, #gestion-container, #reporte-container {
     margin-bottom: 30px;
+    padding: 15px 0;
 }
 
 /* Botones en las pestañas */
@@ -77,6 +78,11 @@ main {
     color: black;
 }
 
+.btn-remove {
+    width: 35px;
+    border-radius: 100%;
+}
+
 /* Tablas */
 .table {
     background-color: white;
@@ -101,7 +107,6 @@ main {
     font-size: 0.95rem;
     padding: 12px;
     transition: all 0.3s ease;
-    margin-bottom: 15px;
 }
 
 .form-control:focus, .form-select:focus {
@@ -118,37 +123,18 @@ main {
     font-size: 0.85rem;
 }
 
-#calendario-container, #gantt_container {
+#calendario-container {
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
-
-/* Ajustes para el calendario */
-.agenda-container {
-    padding: 15px 0;
-}
-        
-.calendario_container {
-    position: relative;
-    overflow: hidden;
-    border-radius: 8px;
-    background: white;
-    padding: 15px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-}
-        
+     
 #calendario-element {
     width: 100%;
     min-height: 500px;
 }
 
-#gantt_diagrama {
-    background-color: #fafafa;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+
 
 /* Modal */
 .modal-content {

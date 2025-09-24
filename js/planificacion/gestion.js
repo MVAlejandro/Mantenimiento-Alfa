@@ -208,7 +208,7 @@ function agregarRefaccion() {
     const nuevo = document.createElement("div");
     nuevo.className = "row mb-2 refaccion-item";
     nuevo.innerHTML = 
-    `<div class="col-5">
+    `<div class="col-6">
         <select class="form-select select-refaccion" 
                 id="${uniqueId}_select" 
                 name="${uniqueId}_select"
@@ -216,7 +216,7 @@ function agregarRefaccion() {
             <option value="">Seleccionar refacción</option>
         </select>
     </div>
-    <div class="col-5">
+    <div class="col-4">
         <input type="number" 
                class="form-control input-cantidad" 
                id="${uniqueId}_cantidad" 
@@ -224,7 +224,7 @@ function agregarRefaccion() {
                placeholder="Cantidad" 
                data-index="${index}">
     </div>
-    <div class="col-2">
+    <div class="col-2 d-flex align-items-center">
         <button type="button" class="btn btn-danger btn-remove" data-index="${index}">×</button>
     </div>`;
 

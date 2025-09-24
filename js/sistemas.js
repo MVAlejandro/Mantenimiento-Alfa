@@ -164,8 +164,12 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     }
 
     // Insertar en Supabase
-    const nuevoSistema = { id_sistema, tipo, descripcion}
+    const nuevoSistema = {tipo, descripcion}
     await insertarSistema(nuevoSistema)
+
+    // Recarga la tabla con los datos actualizados
+    const sistemasActualizados = await obtenerSistemasCompletos();
+    generarTablaSistemas(sistemasActualizados);
 })
 
 // Cargar los sistemas al iniciar la página
@@ -244,4 +248,39 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
         generarTablaSistemas(sistemasActualizadas);
         bootstrap.Modal.getInstance(document.getElementById('sistema_modal')).hide();
     }
+});
+
+// Eliminar entrada al dar click en el botón del segundo modal
+document.getElementById('btn_eliminar_entrada').addEventListener('click', async () => {
+    const idSistema = document.getElementById('edit_id_sistema').value;
+
+    if (!idSistema) {
+        alert('No se pudo obtener el ID del sistema a eliminar.');
+        return;
+    }
+
+    const { error } = await supabase
+        .from('sistemas')
+        .delete()
+        .eq('id_sistema', idSistema);
+
+    if (error) {
+        console.error('Error eliminando sistema:', error);
+        alert('Ocurrió un error al eliminar el sistema.');
+        return;
+    }
+
+    // Cerrar los modales
+    const consultaModal = bootstrap.Modal.getInstance(document.getElementById('consulta_modal'));
+    if (consultaModal) consultaModal.hide();
+
+    const sistemaModal = bootstrap.Modal.getInstance(document.getElementById('sistema_modal'));
+    if (sistemaModal) sistemaModal.hide();
+
+    // Recarga la tabla con los datos actualizados
+    const sistemasActualizados = await obtenerSistemasCompletos();
+    generarTablaSistemas(sistemasActualizados);
+
+    // Mensaje de éxito
+    alert('Sistema eliminado correctamente.');
 });

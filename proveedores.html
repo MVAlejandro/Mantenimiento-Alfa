@@ -137,10 +137,13 @@
 
     <!-- Modal para editar proveedor -->
     <div class="modal fade" id="proveedor_modal" tabindex="-1" aria-labelledby="proveedor_modalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="proveedor_modalLabel">Editar proveedor</h1>
+                    <div class="row">
+                        <h2 class="modal-title" id="unidad_modalLabel">Editar proveedor</h2>
+                        <span class="col form-text text-muted">* Campos editables</span>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -197,10 +200,29 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <div class="form-text text-muted">* Campos editables</div>
+                    <button type="button" class="btn btn-danger" id="btn_del" data-bs-target="#consulta_modal" data-bs-toggle="modal">Eliminar proveedor</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     <button type="button" class="btn btn-primary" id="btn_guardar_cambios">Guardar cambios</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar registro -->
+    <div class="modal fade" id="consulta_modal" aria-hidden="true" aria-labelledby="consulta_modalLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="consulta_modalLabel">CONFIRMACIÓN</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro de querer eliminar el registro seleccionado?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary conf-btn" data-bs-target="#unidad_modal" data-bs-toggle="modal">No</button>
+                <button class="btn btn-primary conf-btn" id="btn_eliminar_entrada">Sí</button>
+            </div>
             </div>
         </div>
     </div>
@@ -212,7 +234,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script src="./js/nav.js" type="module"></script>
-<script src="/js/verificacion.js" type="module"></script>
+<script src="./js/verificacion.js" type="module"></script>
 <script src="./js/proveedores.js" type="module"></script>
 </body>
 </html>

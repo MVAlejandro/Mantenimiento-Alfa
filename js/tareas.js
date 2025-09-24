@@ -174,7 +174,7 @@ document.getElementById('btn_filtro').addEventListener('click', async function (
     generarTablaTareas(filtradas);
 });
 
-// Función para cargar las unidades desde Supabase en la tabla
+// Función para cargar las tareas desde Supabase en la tabla
 function generarTablaTareas(tareas) {
     const tbody = document.querySelector('#tabla_tareas tbody');
     tbody.innerHTML = '';
@@ -219,24 +219,46 @@ function generarTablaTareas(tareas) {
 
 // Cargar proveedores para mostrar en modal
 async function cargarProveedores() {
-    const { data: proveedores, error } = await supabase
-        .from('proveedores')
-        .select('id_proveedor, nombre');
+    const responsable = document.getElementById('responsable');
+    const contenedor = document.getElementById("tarea-proveedor");
+        responsable.addEventListener('change', async function () {
+            if (responsable.value === '6'){
+                contenedor.innerHTML = 
+                `<div class="col-lg-2 d-flex align-items-center">
+                    <label for="proveedor" class="form-label">Proveedor:</label>
+                </div>
+                <div class="col-lg-9 ms-auto">
+                    <select id="proveedor" class="form-select" aria-label="Default select example">
+                        <option value="0">Seleccione...</option>
+                        
+                    </select>
+                    <p class="error invalid-feedback" id="error-responsable" style="color: red;"></p>
+                </div>`;
 
-    const select = document.getElementById('responsable');
-    select.innerHTML = '<option value="0">Seleccione...</option>';
+                const { data: proveedores, error } = await supabase
+                    .from('proveedores')
+                    .select('id_proveedor, nombre')
+                    .not('id_proveedor', 'in', '(1,2,3,4,5)');
 
-    if (error) {
-        console.error('Error al cargar proveedores:', error);
-        return;
-    }
+                const select = document.getElementById('proveedor');
+                select.innerHTML = '<option value="0">Seleccione...</option>';
 
-    proveedores.forEach(p => {
-        const option = document.createElement('option');
-        option.value = p.id_proveedor;
-        option.textContent = p.nombre;
-        select.appendChild(option);
-    });
+                if (error) {
+                    console.error('Error al cargar proveedores:', error);
+                    return;
+                }
+
+                proveedores.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id_proveedor;
+                    option.textContent = p.nombre;
+                    select.appendChild(option);
+                });
+
+            } else {
+                contenedor.innerHTML = '';
+            }
+        });
 }
 
 // Evento al dar click al botón Agregar
@@ -284,6 +306,10 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     // Insertar en Supabase
     const nuevaTarea = {nombre, id_unidad, id_sistema, id_periodicidad, descripcion};
     await insertarTarea(nuevaTarea)
+
+    // Recarga la tabla con los datos actualizados
+    const tareasActualizadas = await obtenerTareasCompletas();
+    generarTablaTareas(tareasActualizadas);
 })
 
 // Evento al dar click al botón Asignar
@@ -291,23 +317,34 @@ document.getElementById('btn_asignar').addEventListener('click', async () => {
     const asignacionModal = document.getElementById('asignacion_modal');
     const idTarea = asignacionModal.dataset.idTarea;
 
-    const proveedor = document.getElementById('responsable').value;
-    const fechaProgramada = document.getElementById('fecha_programada').value;
+    const responsable = document.getElementById('responsable').value;
+    let proveedorSeleccionado = null;
 
-    if (!proveedor || proveedor === "0") {
-        alert('Seleccione un responsable.');
-        return;
+    if (responsable === "6") {
+        const proveedorExterno = document.getElementById('proveedor').value;
+
+        if (!proveedorExterno || proveedorExterno === "0") {
+            alert('Seleccione un proveedor externo.');
+            return;
+        }
+
+        proveedorSeleccionado = proveedorExterno;
+    } else {
+        // Si el responsable es un proveedor interno (1–5)
+        proveedorSeleccionado = responsable;
     }
+
+    const fechaProgramada = document.getElementById('fecha_programada').value;
 
     if (!fechaProgramada) {
         alert('Ingrese una fecha programada.');
         return;
     }
 
-    // Insertar en tarea_proveedor
+    // Asignar proveedor a tarea
     const { error: errorTP } = await supabase
         .from('tarea_proveedor')
-        .insert([{ id_tarea: idTarea, id_proveedor: proveedor }]);
+        .insert([{ id_tarea: idTarea, id_proveedor: proveedorSeleccionado }]);
 
     if (errorTP) {
         console.error('Error al insertar en tarea_proveedor:', errorTP);
@@ -315,7 +352,7 @@ document.getElementById('btn_asignar').addEventListener('click', async () => {
         return;
     }
 
-    // Insertar en calendario con estado Pendiente
+    // Insertar en calendario con estado "Pendiente" por defecto
     const { error: errorCal } = await supabase
         .from('calendario')
         .insert([{ id_tarea: idTarea, fecha_programada: fechaProgramada }]);
@@ -335,6 +372,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     cargarOpciones('unidad', 'unidades', 'id_unidad', 'nombre')
     cargarOpciones('sistema', 'sistemas', 'id_sistema', 'tipo')
     cargarOpciones('periodicidad', 'periodicidad', 'id_periodicidad', 'nombre')
+
     cargarProveedores()
     generarTablaTareas()
 
@@ -420,3 +458,39 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
         bootstrap.Modal.getInstance(document.getElementById('tarea_modal')).hide();
     }
 });
+
+// Eliminar entrada al dar click en el botón del segundo modal
+document.getElementById('btn_eliminar_entrada').addEventListener('click', async () => {
+    const idTarea = document.getElementById('edit_id_tarea').value;
+
+    if (!idTarea) {
+        alert('No se pudo obtener el ID de la tarea a eliminar.');
+        return;
+    }
+
+    const { error } = await supabase
+        .from('tareas')
+        .delete()
+        .eq('id_tarea', idTarea);
+
+    if (error) {
+        console.error('Error eliminando tarea:', error);
+        alert('Ocurrió un error al eliminar la tarea.');
+        return;
+    }
+
+    // Cerrar los modales
+    const consultaModal = bootstrap.Modal.getInstance(document.getElementById('consulta_modal'));
+    if (consultaModal) consultaModal.hide();
+
+    const tareaModal = bootstrap.Modal.getInstance(document.getElementById('tarea_modal'));
+    if (tareaModal) tareaModal.hide();
+
+    // Recarga la tabla con los datos actualizados
+    const tareasActualizadas = await obtenerTareasCompletas();
+    generarTablaTareas(tareasActualizadas);
+
+    // Mensaje de éxito
+    alert('Tarea eliminada correctamente.');
+});
+

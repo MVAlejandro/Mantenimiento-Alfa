@@ -290,6 +290,10 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     // Insertar en Supabase
     const nuevaUnidad = { id_unidad, nombre, modelo, anio, descripcion, id_empleado }
     await insertarUnidad(nuevaUnidad)
+
+    // Recarga la tabla con los datos actualizados
+    const unidadesActualizadas = await obtenerUnidadesCompletas();
+    generarTablaUnidades(unidadesActualizadas);
 })
 
 // Cargar los empleados, unidades y registros al iniciar la página
@@ -383,4 +387,39 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
         generarTablaUnidades(unidadesActualizadas);
         bootstrap.Modal.getInstance(document.getElementById('unidad_modal')).hide();
     }
+});
+
+// Eliminar entrada al dar click en el botón del segundo modal
+document.getElementById('btn_eliminar_entrada').addEventListener('click', async () => {
+    const idUnidad = document.getElementById('edit_id_unidad').value;
+
+    if (!idUnidad) {
+        alert('No se pudo obtener el ID de la unidad a eliminar.');
+        return;
+    }
+
+    const { error } = await supabase
+        .from('unidades')
+        .delete()
+        .eq('id_unidad', idUnidad);
+
+    if (error) {
+        console.error('Error eliminando unidad:', error);
+        alert('Ocurrió un error al eliminar la unidad.');
+        return;
+    }
+
+    // Cerrar los modales
+    const consultaModal = bootstrap.Modal.getInstance(document.getElementById('consulta_modal'));
+    if (consultaModal) consultaModal.hide();
+
+    const unidadModal = bootstrap.Modal.getInstance(document.getElementById('unidad_modal'));
+    if (unidadModal) unidadModal.hide();
+
+    // Recarga la tabla con los datos actualizados
+    const unidadesActualizadas = await obtenerUnidadesCompletas();
+    generarTablaUnidades(unidadesActualizadas);
+
+    // Mensaje de éxito
+    alert('Unidad eliminada correctamente.');
 });
