@@ -1,6 +1,6 @@
 
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
-import supabase from './supabase/supabase-client.js'
+import supabase from '../supabase/supabase-client.js'
 
 // Función para validar sesión con Supabase
 async function verificarAutenticacion() {

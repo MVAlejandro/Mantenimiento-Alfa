@@ -374,7 +374,7 @@ document.getElementById('btn_asignar').addEventListener('click', async () => {
         return;
     }
 
-    // Función para formatear fecha en YYYY-MM-DD sin afectar por zona horaria
+    // Función para formatear fecha en YYYY-MM-DD
     function formatearFecha(fecha) {
         const year = fecha.getFullYear();
         const month = String(fecha.getMonth() + 1).padStart(2, '0');
@@ -382,15 +382,20 @@ document.getElementById('btn_asignar').addEventListener('click', async () => {
         return `${year}-${month}-${day}`;
     }
 
-    // Función para generar fechas periódicas
+    // Función para generar fechas periódicas solo dentro del año en curso
     function generarFechasPeriodicas(fechaInicial, periodicidad, repeticiones) {
         const fechas = [];
-        // Parsear la fecha correctamente desde string 'YYYY-MM-DD'
+
         let [year, month, day] = fechaInicial.split('-').map(Number);
         let fecha = new Date(year, month - 1, day);
-        fecha.setHours(0, 0, 0, 0); // Normaliza la hora para evitar desfases
+        fecha.setHours(0, 0, 0, 0);
+
+        const finDeAnio = new Date(new Date().getFullYear(), 11, 31); // 31 de diciembre del año actual
 
         for (let i = 0; i < repeticiones; i++) {
+            // Detener si la fecha ya pasa del año en curso
+            if (fecha > finDeAnio) break; 
+
             fechas.push(new Date(fecha));
 
             if (['mensual', 'bimestral', 'trimestral', 'semestral', 'anual'].includes(periodicidad.nombre.toLowerCase())) {

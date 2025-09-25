@@ -105,6 +105,8 @@ async function cargarTareas() {
                 id_original: tarea.id_tarea
             }));
         });
+
+        tareasProcesadas.sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada));
         
         // Aplicar filtro de departamento
         let tareasFiltradas = tareasProcesadas;
@@ -281,7 +283,6 @@ function obtenerEstadoTarea(idTarea) {
 
 // Mostrar detalles de la tarea en el modal
 function abrirModal(task) {
-    console.log(task);
     
     const eventoModal = document.getElementById('evento_modal');
     

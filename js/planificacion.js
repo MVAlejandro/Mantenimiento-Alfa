@@ -1,8 +1,9 @@
 
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
-import {generarGantt, generarCalendario} from "./planificacion/agenda.js"
-import {generarSupervision, generarReporte} from "./planificacion/reporte.js"
-import {generarGestion} from "./planificacion/gestion.js"
+import { generarGantt, generarCalendario } from "./planificacion/agenda.js";
+import { generarTablaGestion } from "./planificacion/gestion.js"
+import { generarTablaSuper, generarTablaReporte } from "./planificacion/reporte.js";
+import { generarTareas } from "./funciones/tareas_supabase.js";
 
 // AGENDA
 document.addEventListener('DOMContentLoaded', function() {
@@ -11,21 +12,32 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // SUPERVISIÓN
-document.getElementById('btn_genS').addEventListener('click', async function(event) {
-    generarSupervision()
+document.getElementById('btn_genS').addEventListener('click', async function() {
+    generarTareas({
+        prefijoInputs: 'S',
+        renderTabla: generarTablaSuper
+    });
 });
-document.getElementById('btn_printS').addEventListener('click', async function(event) {
-    window.print()
+document.getElementById('btn_printS').addEventListener('click', function() {
+    window.print();
 });
 
 // GESTIÓN
-document.getElementById('btn_busq').addEventListener('click', async function(event) {
-    generarGestion()
+document.getElementById('btn_busq').addEventListener('click', async function() {
+    generarTareas({
+        prefijoInputs: 'G',
+        renderTabla: generarTablaGestion,
+        soloPendientes: true
+    });
 });
 
 // REPORTE
 document.getElementById('btn_genR').addEventListener('click', function() {
-    generarReporte();
+    generarTareas({
+        prefijoInputs: 'R',
+        renderTabla: generarTablaReporte,
+        incluirRefacciones: true
+    });
 });
 document.getElementById('btn_printR').addEventListener('click', function() {
     window.print();

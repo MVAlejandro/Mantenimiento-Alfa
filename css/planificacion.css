@@ -14,6 +14,11 @@ main {
 }
 
 /*--- CONTENIDO PRINCIPAL ---*/
+h1 {
+    font-weight: bold;
+    color: #7B7B7B;
+}
+
 /* Barra de navegación de vistas */
 .nav-pills .nav-link {
     font-weight: 600;
