@@ -1,9 +1,9 @@
 
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
 import supabase from './supabase/supabase-client.js'
-import {validarCamposInvalidos} from "../js/validaciones/validar_campos.js"
-import {validarText, validarId, validarTelefono, validarEmail, validarNombre} from "./validaciones/regex.js"
-
+import { validarCamposInvalidos } from "../js/validaciones/validar_campos.js"
+import { validarText, validarId, validarTelefono, validarEmail, validarNombre } from "./validaciones/regex.js"
+ 
 // Función centralizada para obtener proveedores
 async function obtenerProveedoresCompletos() {
     const { data, error } = await supabase

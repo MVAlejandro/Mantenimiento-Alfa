@@ -3,6 +3,7 @@
 import supabase from './supabase/supabase-client.js'
 import { validarCamposInvalidos, validarSelect } from "../js/validaciones/validar_campos.js"
 import { validarText, validarId, validarAño } from "./validaciones/regex.js"
+import { cargarOpciones } from './funciones/cargar_select.js';
 
 // Función centralizada para obtener unidades
 async function obtenerUnidadesCompletas() {
@@ -184,26 +185,6 @@ function generarTablaUnidades(unidades) {
     });
 }
 
-// Función para cargar departamentos en el select del formulario
-async function cargarDepartamentos() {
-    const { data, error } = await supabase.from('departamentos').select('id_departamento, nombre');
-
-    const selectDepto = document.getElementById('departamento');
-    selectDepto.innerHTML = '<option value="0">Seleccione...</option>';
-
-    if (error) {
-        console.error("Error cargando departamentos:", error);
-        return;
-    }
-
-    data.forEach(depto => {
-        const option = document.createElement('option');
-        option.value = depto.id_departamento;
-        option.textContent = depto.nombre;
-        selectDepto.appendChild(option);
-    });
-}
-
 // Función para cargar empleado en el select del formulario
 async function cargarEmpleados(idDepartamento) {
     const { data, error } = await supabase
@@ -298,7 +279,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
 
 // Cargar los empleados, unidades y registros al iniciar la página
 document.addEventListener('DOMContentLoaded', async () => {
-    cargarDepartamentos()
+    cargarOpciones('departamento', 'departamentos', 'id_departamento', 'nombre')
     generarTablaUnidades()
 
     const unidadesProcesadas = await obtenerUnidadesCompletas();

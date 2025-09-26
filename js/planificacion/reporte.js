@@ -1,6 +1,5 @@
 
 import supabase from '../supabase/supabase-client.js'
-import {generarTareas} from '../funciones/tareas_supabase.js';
 
 // ---------- SUPERVISIÓN ----------//
 // Función para cargar departamentos en el select

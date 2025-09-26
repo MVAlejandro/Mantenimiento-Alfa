@@ -1,8 +1,8 @@
 
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
 import supabase from './supabase/supabase-client.js'
-import {validarCamposInvalidos} from "../js/validaciones/validar_campos.js"
-import {validarText, validarId, validarCosto} from "./validaciones/regex.js"
+import { validarCamposInvalidos } from "../js/validaciones/validar_campos.js"
+import { validarText, validarId, validarCosto } from "./validaciones/regex.js"
 
 // Función centralizada para obtener refacciones
 async function obtenerRefaccionesCompletas() {
