@@ -349,6 +349,17 @@ document.getElementById('btn_asignar').addEventListener('click', async () => {
         return;
     }
 
+    // Lista fija de días festivos en formato MM-DD
+    const diasFestivos = [
+        "01-01", // Año Nuevo
+        "05-01", // Día del Trabajo
+        "09-16", // Día de la Independencia
+        "11-17", // Día de la Revolución
+        "12-25",  // Navidad
+        "02-02",  // Día de la Constitución
+        "03-16" // Natalicio de Benito Juárez
+    ];
+
     // Función para formatear fecha en YYYY-MM-DD
     function formatearFecha(fecha) {
         const year = fecha.getFullYear();
@@ -366,13 +377,19 @@ document.getElementById('btn_asignar').addEventListener('click', async () => {
         fecha.setHours(0, 0, 0, 0);
 
         const finDeAnio = new Date(new Date().getFullYear(), 11, 31); // 31 de diciembre del año actual
+        let repeticionesGeneradas = 0;
 
-        for (let i = 0; i < repeticiones; i++) {
-            // Detener si la fecha ya pasa del año en curso
-            if (fecha > finDeAnio) break; 
+        while (repeticionesGeneradas < repeticiones && fecha <= finDeAnio) {
+            const diaSemana = fecha.getDay(); // 0 = domingo
+            const mesDia = `${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}`;
 
-            fechas.push(new Date(fecha));
+            if (diaSemana !== 0 && !diasFestivos.includes(mesDia)) {
+                // Solo agregar si no es domingo ni festivo
+                fechas.push(new Date(fecha));
+                repeticionesGeneradas++;
+            }
 
+            // Avanzar según la periodicidad
             if (['mensual', 'bimestral', 'trimestral', 'semestral', 'anual'].includes(periodicidad.nombre.toLowerCase())) {
                 const mesesASumar = {
                     mensual: 1,

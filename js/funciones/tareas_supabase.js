@@ -32,7 +32,7 @@ export async function generarTareas(options) {
                 nombre,
                 id_empleado(
                     nombre,
-                    departamentos(nombre)
+                    departamentos(id_departamento, nombre)
                 )
             ),
             tarea_proveedor!tarea_proveedor_id_tarea_fkey(
@@ -69,6 +69,7 @@ export async function generarTareas(options) {
         const tareasProcesadas = tareasData.flatMap(tarea => {
             const proveedor = tarea.tarea_proveedor?.[0]?.proveedores?.nombre || 'Sin asignar';
             const departamento = tarea.unidades?.id_empleado?.departamentos?.nombre || 'N/A';
+            const idDepartamento = tarea.unidades?.id_empleado?.departamentos?.id_departamento || null;
 
             const refacciones = incluirRefacciones && tarea.tarea_refaccion?.length
                 ? tarea.tarea_refaccion.map(tr => `${tr.refacciones.nombre} (${tr.cantidad})`).join(', ')
@@ -81,6 +82,7 @@ export async function generarTareas(options) {
                     nombre: tarea.nombre,
                     id_unidad: tarea.unidades?.nombre || tarea.id_unidad,
                     departamento,
+                    id_departamento: idDepartamento,
                     id_proveedor: proveedor,
                     fecha_programada: cal.fecha_programada,
                     estado: cal.estado,
@@ -97,7 +99,7 @@ export async function generarTareas(options) {
             const cumpleFechas = (!isNaN(inicio) ? new Date(t.fecha_programada) >= inicio : true) &&
                                  (!isNaN(fin) ? new Date(t.fecha_programada) <= fin : true);
             const cumpleEstado = estadoFiltro === '0' || t.estado === estadoFiltro;
-            const cumpleDepartamento = departamentoFiltro === '0' || t.departamento === departamentoFiltro;
+            const cumpleDepartamento = departamentoFiltro === '0' || t.id_departamento == departamentoFiltro;
             return cumpleFechas && cumpleEstado && cumpleDepartamento;
         });
 
