@@ -315,10 +315,36 @@ document.getElementById('btn_asignar').addEventListener('click', async () => {
         return;
     }
 
+    // Obtener el año de la fecha programada
+    const anioSeleccionado = new Date(fechaProgramada).getFullYear();
+
+    // Verificar si ya existe una asignación para el mismo proveedor, tarea y año
+    const { data: asignacionExistente, error: errorVerificacion } = await supabase
+        .from('tarea_proveedor')
+        .select('*')
+        .eq('id_tarea', idTarea)
+        .eq('id_proveedor', proveedorSeleccionado)
+        .eq('anio', anioSeleccionado);
+
+    if (errorVerificacion) {
+        console.error('Error al verificar existencia de asignación:', errorVerificacion);
+        alert('Ocurrió un error al verificar la asignación.');
+        return;
+    }
+
+    if (asignacionExistente.length > 0) {
+        alert('Este proveedor ya está asignado a esta tarea en el año seleccionado.');
+        return;
+    }
+
     // Asignar proveedor a tarea
     const { error: errorTP } = await supabase
-        .from('tarea_proveedor')
-        .insert([{ id_tarea: idTarea, id_proveedor: proveedorSeleccionado }]);
+    .from('tarea_proveedor')
+    .insert([{ 
+        id_tarea: idTarea, 
+        id_proveedor: proveedorSeleccionado,
+        anio: anioSeleccionado
+    }]);
 
     if (errorTP) {
         console.error('Error al insertar en tarea_proveedor:', errorTP);
@@ -376,7 +402,8 @@ document.getElementById('btn_asignar').addEventListener('click', async () => {
         let fecha = new Date(year, month - 1, day);
         fecha.setHours(0, 0, 0, 0);
 
-        const finDeAnio = new Date(new Date().getFullYear(), 11, 31); // 31 de diciembre del año actual
+        const anioInicial = fecha.getFullYear();
+        const finDeAnio = new Date(anioInicial, 11, 31);
         let repeticionesGeneradas = 0;
 
         while (repeticionesGeneradas < repeticiones && fecha <= finDeAnio) {
