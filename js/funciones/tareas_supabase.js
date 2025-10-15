@@ -14,9 +14,10 @@ export async function generarTareas(options) {
     const finInput = document.getElementById(`fechaFin${prefijoInputs}`)?.value;
     const estadoFiltro = document.getElementById(`estado${prefijoInputs}`)?.value || '0';
     const departamentoFiltro = document.getElementById(`departamento${prefijoInputs}`)?.value || '0';
+    const proveedorFiltro = document.getElementById(`proveedor${prefijoInputs}`)?.value || '0';
 
     // Si no hay filtros activos (excepto Gestión que siempre filtra pendientes)
-    if (!inicioInput && !finInput && estadoFiltro === '0' && departamentoFiltro === '0' && !soloPendientes) {
+    if (!inicioInput && !finInput && estadoFiltro === '0' && departamentoFiltro === '0' && proveedorFiltro === '0' && !soloPendientes) {
         renderTabla([]);
         return;
     }
@@ -67,7 +68,8 @@ export async function generarTareas(options) {
 
         // Expandir calendario
         const tareasProcesadas = tareasData.flatMap(tarea => {
-            const proveedor = tarea.tarea_proveedor?.[0]?.proveedores?.nombre || 'Sin asignar';
+            const proveedor = tarea.tarea_proveedor?.[0]?.id_proveedor || null;
+            const nombreProveedor = tarea.tarea_proveedor?.[0]?.proveedores?.nombre || 'Sin asignar';
             const departamento = tarea.unidades?.id_empleado?.departamentos?.nombre || 'N/A';
             const idDepartamento = tarea.unidades?.id_empleado?.departamentos?.id_departamento || null;
 
@@ -84,6 +86,7 @@ export async function generarTareas(options) {
                     departamento,
                     id_departamento: idDepartamento,
                     id_proveedor: proveedor,
+                    nombre_proveedor: nombreProveedor,
                     fecha_programada: cal.fecha_programada,
                     estado: cal.estado,
                     refacciones,
@@ -100,7 +103,8 @@ export async function generarTareas(options) {
                                  (!isNaN(fin) ? new Date(t.fecha_programada) <= fin : true);
             const cumpleEstado = estadoFiltro === '0' || t.estado === estadoFiltro;
             const cumpleDepartamento = departamentoFiltro === '0' || t.id_departamento == departamentoFiltro;
-            return cumpleFechas && cumpleEstado && cumpleDepartamento;
+            const cumpleProveedor = proveedorFiltro === '0' || t.id_proveedor === proveedorFiltro;
+            return cumpleFechas && cumpleEstado && cumpleDepartamento && cumpleProveedor;
         });
 
         renderTabla(tareasFiltradas);

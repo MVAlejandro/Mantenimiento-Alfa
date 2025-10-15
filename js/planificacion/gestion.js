@@ -22,9 +22,30 @@ async function cargarDepartamentos(deptoElement) {
     });
 }
 
+// Función para cargar proveedores en el select
+async function cargarProveedores(provElement) {
+    const { data, error } = await supabase.from('proveedores').select('id_proveedor, nombre');
+
+    const selectProv = document.getElementById(provElement);
+    selectProv.innerHTML = '<option value="0">Todos</option>';
+
+    if (error) {
+        console.error("Error cargando proveedores:", error);
+        return;
+    }
+
+    data.forEach(prov => {
+        const option = document.createElement('option');
+        option.value = prov.id_proveedor;
+        option.textContent = prov.nombre;
+        selectProv.appendChild(option);
+    });
+}
+
 // Cargar los departamentos al iniciar la página
 document.addEventListener('DOMContentLoaded', () => {
     cargarDepartamentos('departamentoG')
+    cargarProveedores('proveedorG')
 })
 
 export function generarTablaGestion(tareas) {
@@ -44,7 +65,7 @@ export function generarTablaGestion(tareas) {
             <td>${t.nombre}</td>
             <td>${t.id_unidad}</td>
             <td>${t.departamento}</td>
-            <td>${t.id_proveedor}</td>
+            <td>${t.nombre_proveedor}</td>
             <td><button type="button" class="btn btn-primary tarea-btn" data-bs-toggle="modal" data-bs-target="#gestion_modal">Gestionar tarea</button></td>
         </tr>`;
     });

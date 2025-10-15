@@ -22,9 +22,30 @@ async function cargarDepartamentos(deptoElement) {
     });
 }
 
-// Cargar los departamentos al iniciar la página
+// Función para cargar proveedores en el select
+async function cargarProveedores(provElement) {
+    const { data, error } = await supabase.from('proveedores').select('id_proveedor, nombre');
+
+    const selectProv = document.getElementById(provElement);
+    selectProv.innerHTML = '<option value="0">Todos</option>';
+
+    if (error) {
+        console.error("Error cargando proveedores:", error);
+        return;
+    }
+
+    data.forEach(prov => {
+        const option = document.createElement('option');
+        option.value = prov.id_proveedor;
+        option.textContent = prov.nombre;
+        selectProv.appendChild(option);
+    });
+}
+
+// Cargar los selects al iniciar la página
 document.addEventListener('DOMContentLoaded', () => {
     cargarDepartamentos('departamentoS')
+    cargarProveedores('proveedorS')
 })
 
 export function generarTablaSuper(tareas) {
@@ -48,7 +69,7 @@ export function generarTablaSuper(tareas) {
             <td>${t.nombre}</td>
             <td>${t.id_unidad}</td>
             <td>${t.departamento}</td>
-            <td>${t.id_proveedor}</td>
+            <td>${t.nombre_proveedor}</td>
             <td></td>
             ${celdaEstado}
             <td>________________</td>
@@ -61,6 +82,7 @@ export function generarTablaSuper(tareas) {
 // Cargar los departamentos al iniciar la página
 document.addEventListener('DOMContentLoaded', () => {
     cargarDepartamentos('departamentoR')
+    cargarProveedores('proveedorR')
 })
 
 export function generarTablaReporte(tareas) {
@@ -79,7 +101,7 @@ export function generarTablaReporte(tareas) {
             <td>${t.nombre}</td>
             <td>${t.id_unidad}</td>
             <td>${t.departamento}</td>
-            <td>${t.id_proveedor}</td>
+            <td>${t.nombre_proveedor}</td>
             <td>${t.estado}</td>
             <td>${t.refacciones}</td>
             <td>${t.observaciones || 'Sin observaciones'}</td>
