@@ -35,7 +35,7 @@
                         <h4 class="fw-bold">Gestión de Activos</h4>
                     </div>
                     <div class="col-4 col-md-3 col-lg-2 d-flex align-items-center">
-                        <button id="btn-add-active" class="btn btn-primary d-flex align-items-center" data-mant-only>
+                        <button id="btn-add-active" class="btn btn-primary d-flex align-items-center d-none" data-mant-only>
                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                             </svg>
@@ -46,7 +46,12 @@
             </div>
         </section>
 
-        <!-- SECCIÓN DE FILTROS GENERALES -->
+        <!-- SECCIÓN DE FORMULARIO PARA AGREGAR REGISTRO -->
+        <section id="actives-form">
+            
+        </section>
+
+        <!-- SECCIÓN DE FILTROS -->
         <section id="actives-filter pt-3">
             <div id="actives-filter-container" class="container pt-4 pb-3">
                 <div class="row ms-2 me-2">
@@ -73,7 +78,7 @@
             </div>
         </section>
 
-        <!-- SECCIÓN DE REPORTE GENERAL -->
+        <!-- SECCIÓN DE REGISTROS -->
         <section id="actives" class="pt-1 pb-4">
             <div id="actives-container" class="container table-responsive p-0">
                 <table id="actives-table" class="table table-hover align-middle">
@@ -83,8 +88,9 @@
                             <th class="p-1 pt-2">NOMBRE</th>
                             <th class="p-1 pt-2">MODELO</th>
                             <th class="p-1 pt-2">RESPONSABLE</th>
+                            <th class="p-1 pt-2">TIPO</th>
                             <th class="p-1 pt-2">DESCRIPCIÓN</th>
-                            <th data-mant-only></th>
+                            <th class="d-none" data-mant-only></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -209,7 +215,7 @@
                     <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body m-auto pt-4 pb-4">
-                    <input type="hidden" id="delete-id-product">
+                    <input type="hidden" id="delete-id-active">
                     <p>¿Está seguro de querer eliminar el registro seleccionado?</p>
                 </div>
                 <div class="modal-footer me-4">

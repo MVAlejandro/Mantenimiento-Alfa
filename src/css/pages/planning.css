@@ -8,7 +8,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-#planning-form-container, #planning-filter-container, .table-responsive, #planning-pages-container {
+#planning-filter-container, #planning-container {
     background-color: var(--background-light) !important;
     border-radius: 1rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

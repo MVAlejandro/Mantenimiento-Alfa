@@ -25,7 +25,7 @@ th {
 }
 
 /* Estilos de texto para la tabla */
-.actives-departament, .actives-day {
+.active-year, .active-departament {
     font-size: 13px;
     color: var(--secondary) !important;
 }
