@@ -1,0 +1,35 @@
+/* Estilos de la página y estructura */
+#spares-header {
+    margin-top: 0;
+}
+
+#spares-header-container {
+    background-color: var(--background-light) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#spares-form-container, #spares-filter-container, .table-responsive, #spares-pages-container {
+    background-color: var(--background-light) !important;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+th {
+    color: var(--secondary) !important;
+}
+
+@media (min-width: 500px) and (max-width: 768px) {
+    #filter-btn {
+        margin-top: 1rem;
+    }
+}
+
+/* Estilos de texto para la tabla */
+.spares-departament, .spares-day {
+    font-size: 13px;
+    color: var(--secondary) !important;
+}
+
+.extra-date, .extra-time, .extraP-date, .extraP-time {
+    color: var(--secondary) !important;
+}

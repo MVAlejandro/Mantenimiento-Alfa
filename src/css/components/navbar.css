@@ -1,0 +1,115 @@
+
+/*--- Barra de relleno superior ---*/
+#top-bar {
+    background-color: var(--primary);
+    color: var(--text-light) !important;
+    height: 38.4px;
+}
+
+#btn-logout {
+    color: var(--text-light);
+    height: 35px;
+    border-radius: 4px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    text-transform: none;
+}
+
+#btn-logout:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#btn-logout:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--primary-dark);
+}
+
+/*--- Barra de navegación principal ---*/
+#site-navbar {
+    background-color: var(--secondary);
+    border: 1px solid var(--background-light);
+    padding: 0px 40px 0px 40px;
+}
+
+#nav-logo, #nav-fill {
+    padding: 10px;
+    margin: 0; 
+}
+
+.dropdown-menu {
+    background-color: var(--secondary);
+    border: none;
+}
+
+@media (min-width: 992px) {
+    .dropdown-menu {
+        display: block;
+        opacity: 0;
+        transform: translateY(8px);
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.3s ease;
+    }
+
+    .dropdown-menu.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: var(--secondary);
+}
+
+.nav-link, .nav-link:focus {
+    color: var(--text-light);
+}
+
+.nav-link.show {
+    color: var(--primary) !important;
+}
+
+.nav-link.link-active {
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.nav-link.link-active::after {
+    width: 100%;
+}
+
+@media (min-width: 992px){
+    .nav-link {
+        position: relative;
+        transition: color 0.3s ease;
+    }
+
+    .nav-link:hover {
+        color: var(--primary);
+    }
+
+    .nav-link.link-active {
+        border-bottom: 2px solid var(--primary);
+    }
+}
+
+#nav-fill {
+    color: var(--secondary);
+}
+
+@media (max-width: 1200px) {
+    #nav-fill {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    #site-navbar {
+        padding: 5px 40px 10px 40px;
+    }
+}

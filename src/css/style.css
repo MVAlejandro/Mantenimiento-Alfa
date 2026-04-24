@@ -1,0 +1,317 @@
+/* Variables de colores generales */
+:root {
+    --primary: #8FC74A;
+    --primary-light: #E8F5E9;
+    --primary-dark: #6c9639;
+    --secondary: #7B7B7B;
+    --secondary-light: #b6b6b6;
+    --background: #F5F5F5;
+    --background-dark: #222222;
+    --background-light: #fff;
+    --text-light: #fff;
+    /* Colores para estados de las tablas */
+    --table-blue-light: #95a9d6;
+    --table-blue-dark: #0a2a6e;
+    --table-greenD-light: #3cb17c;
+    --table-greenD-dark: #0b5231;
+    --table-yellow-light: #fcebb9;
+    --table-yellow-dark: #7e6009;
+    --table-greenL-light: #bce0c8;
+    --table-greenL-dark: #0c6e40;
+    --table-red-light: #dd989f;
+    --table-red-dark: #79111c;
+    --table-grey-light: #afafaf;
+    --table-grey-dark: #505050;
+}
+
+/* Estilos generales de la página y estructura */
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+main {
+    flex: 1;
+    background-color: var(--background);
+}
+
+section {
+    margin: 20px 0px 20px 0px;
+}
+
+p, h5, h4 {
+    margin-bottom: 0px;
+}
+
+table {
+    font-size: 15px;
+}
+
+@media (max-width: 770px) {
+    table {
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 430px) {
+    p {
+        font-size: 14px;
+    }
+}
+
+/* Estados de las tablas de planeación */
+.blue {
+    background-color: var(--table-blue-light) !important;
+    color: var(--table-blue-dark) !important;
+}
+
+.yellow {
+    background-color: var(--table-yellow-light) !important;
+    color: var(--table-yellow-dark) !important;
+}
+
+.greenL {
+    background-color: var(--table-greenL-light) !important;
+    color: var(--table-greenL-dark) !important;
+}
+
+.greenD {
+    background-color: var(--table-greenD-light) !important;
+    color: var(--table-greenD-dark) !important;
+}
+
+.red {
+    background-color: var(--table-red-light) !important;
+    color: var(--table-red-dark) !important;
+}
+
+.grey {
+    background-color: var(--table-grey-light) !important;
+    color: var(--table-grey-dark) !important;
+}
+
+/* Contenedores de figuras para los iconos */
+.icon-circle {
+    color: var(--primary);    
+    background: var(--primary-light);
+    border-radius: 100%;        
+    width: 64px;                      
+    height: 64px;                      
+    padding: 16px;                    
+}
+
+.icon-square {
+    color: var(--primary);    
+    background: var(--primary-light);
+    border-radius: 15px;        
+    width: 60px;                      
+    height: 60px;                      
+    padding: 14px;                    
+}
+
+/* Estilos para formularios */
+.form-control, .form-select{
+    border-radius: 10px;
+    border: 1px solid var(--secondary-light);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 5px var(--primary-dark);
+}
+
+.form-control:disabled, .form-select:disabled {
+    border-color: var(--secondary) !important;
+    background-color: transparent !important;
+    color: var(--secondary);
+    font-weight: 500;
+}
+
+input::placeholder, textarea::placeholder, #default-option {
+    color: var(--primary-dark) !important;
+    font-style: italic;
+    opacity: 1;
+    font-size: 14px;
+}
+
+.label-over-border {
+    position: relative;
+}
+
+.label-over-border label {
+    position: absolute;
+    top: -1.35rem;
+    background-color: var(--background-light);
+    color: var(--secondary);
+    padding: 0 0.2rem;
+    font-size: 0.875rem;
+    z-index: 1;
+}
+
+/* Estilos para filtros */
+@media (min-width: 500px) and (max-width: 768px) {
+    .filter {
+        margin-top: 1.5rem;
+    }
+
+    .label-over-border label {
+        top: -1.2rem;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 430px) {
+    .label-over-border {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Eliminar flechas de inputs numericos */
+.no-arrows::-webkit-outer-spin-button,
+.no-arrows::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Estilos para botones */
+.btn-primary, .btn:disabled {
+    border: 1px solid var(--primary);
+    background-color: var(--primary);
+    border-radius: 11px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--primary-dark);
+}
+
+.btn-secondary {
+    border: 1px solid var(--secondary-light);
+    background-color: transparent;
+    color: var(--secondary);
+    border-radius: 11px;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary);
+    border-color: var(--primary-dark);
+    color: var(--text-light);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--primary-dark);
+}
+
+/* Estilos para botones de las tabs */
+.tab-btn {
+    background-color: var(--background);
+    border: 1px solid var(--secondary-light);
+    color: var(--background-dark) !important;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-radius: 11px !important;
+    margin-right: 8px;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background-color: var(--primary) !important;
+    color: var(--text-light) !important;
+}
+
+.tab-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--secondary) !important;
+}
+
+/* Estilos para botones de edición de entradas */
+.action-buttons {
+    padding: 0px;
+    gap: 8px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-edit, .btn-delete{
+    border-radius: 12px;
+    border: 1px solid var(--secondary-light);
+}
+
+.btn-edit {
+    color: var(--primary-dark);
+    box-shadow: 0 2px 4px rgba(108, 150, 57, 0.3);
+}
+
+.btn-edit:hover {
+    background-color: var(--primary-dark);
+    color: var(--text-light);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-delete {
+    color: var(--table-red-dark);
+    box-shadow: 0 2px 4px rgba(121, 17, 28, 0.3);
+}
+
+.btn-delete:hover {
+    background-color: var(--table-red-dark);
+    color: var(--text-light);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-delete-confirm {
+    width: 85px;
+}
+
+.btn-remove {
+    border-radius: 12px;
+    border: 1px solid var(--secondary-light);
+    color: var(--canceled-dark);
+    box-shadow: 0 2px 4px rgba(121, 17, 28, 0.3);
+}
+
+.btn-remove:hover {
+    background-color: var(--canceled-dark);
+    color: var(--text-light);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para paginación y su navegación */
+.pagination .page-link {
+    border: 1px solid var(--secondary-light);
+    background-color: var(--background);
+    color: var(--secondary);
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pagination .page-link:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--primary-dark);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--text-light);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
