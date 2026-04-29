@@ -47,7 +47,7 @@ export async function getActives() {
         modelo: activo.modelo,
         anio: activo.anio,
         descripcion: activo.descripcion,
-        id_clid_empleadoiente: activo.id_empleado,
+        id_empleado: activo.id_empleado,
         encargado: activo.rh_empleados?.nombre,
         numero_encargado: activo.rh_empleados?.numero_empleado,
         puesto_encargado: activo.rh_empleados?.puesto,

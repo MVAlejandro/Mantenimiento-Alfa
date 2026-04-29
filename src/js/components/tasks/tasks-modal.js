@@ -1,21 +1,27 @@
 import supabase from '../../supabase/supabase-client.js'
 // Servicios Supabase
-import { updateActive, deleteActive } from '../../services/actives-service.js'; 
-import { renderActivesTable } from './actives-table.js'; 
+import { getActives } from '../../services/actives-service.js';
+import { updateTask, deleteTask, getPeriodicity } from '../../services/tasks-service.js'; 
+import { asignTask } from '../../services/tasks-asign-service.js';
+import { renderTasksTable } from './tasks-table.js'; 
 // Utilidades
-import { textValidate, inputValidate } from '../../utils/form-validations.js';
+import { textValidate, inputValidate, selectValidate } from '../../utils/form-validations.js';
+import { loadOptions, loadOptionsFilter } from '../../utils/load-select.js';
 
 // Función para cargar datos en el modal
-export async function renderActivesEditModal(activo) {
+export async function renderTasksEditModal(tarea) {
+    // Cargar los selects en el modal
+    loadOptionsFilter('edit-active', getActives, 'id_activo', 'nombre', 'Seleccione...', tarea.id_activo);
+    loadOptionsFilter('edit-periodicity', getPeriodicity, 'id_periodicidad', 'nombre', 'Seleccione...', tarea.id_periodicidad);
+
     // Insertar valores en los inputs
-    document.getElementById('edit-id-active').value = activo.id_activo;
-    document.getElementById('edit-code').value = activo.codigo;
-    document.getElementById('edit-staff').value = activo.encargado;
-    document.getElementById('edit-departament').value = activo.departamento;
-    document.getElementById('edit-name').value = activo.nombre;
-    document.getElementById('edit-model').value = activo.modelo;
-    document.getElementById('edit-year').value = activo.anio;
-    document.getElementById('edit-description').value = activo.descripcion;
+    document.getElementById('edit-id-task').value = tarea.id_tarea;
+    document.getElementById('edit-name').value = tarea.nombre;
+    document.getElementById('edit-periodicity').value = tarea.id_periodicidad;
+    document.getElementById('edit-active').value = tarea.id_activo;
+    document.getElementById('edit-system').value = tarea.sistema;
+    document.getElementById('edit-priority').value = tarea.prioridad;
+    document.getElementById('edit-description').value = tarea.descripcion;
 }
 
 // Función para guardar cambios
@@ -49,7 +55,7 @@ document.getElementById('btn-edit-entry').addEventListener('click', async functi
         return
     }
 
-    const id_activo = document.getElementById('edit-id-active').value;
+    const id_tarea = document.getElementById('edit-id-active').value;
     const updatedData = {
         nombre: nombreIn.value,
         modelo: modeloIn.value,
@@ -58,7 +64,7 @@ document.getElementById('btn-edit-entry').addEventListener('click', async functi
     };
 
     try {
-        await updateActive(id_activo, updatedData);
+        await updateTask(id_tarea, updatedData);
 
         form.querySelectorAll('.is-valid, .is-invalid').forEach(e => {
             e.classList.remove('is-valid', 'is-invalid');
@@ -67,37 +73,55 @@ document.getElementById('btn-edit-entry').addEventListener('click', async functi
         // Cerrar el modal y mostrar alerta
         bootstrap.Modal.getInstance(document.getElementById('edit-modal')).hide();
         Swal.fire({
-            title: 'Activo actualizado correctamente.',
+            title: 'Tarea actualizada correctamente.',
             icon: 'success',
             confirmButtonText: 'OK'
         });
 
         // Recarga la tabla con los datos actualizados
-        await renderActivesTable();
+        await renderTasksTable();
     } catch (err) {
-        console.error('Error al actualizar activo:', err);
+        console.error('Error al actualizar tarea:', err);
         Swal.fire({
             title: 'Oops...',
-            text: 'Ocurrió un error al actualizar el activo.',
+            text: 'Ocurrió un error al actualizar la tarea.',
             icon: 'error',
             confirmButtonText: 'OK'
         });
     }
 });
 
-// Eliminar entrada al dar click en el botón del modal
-document.getElementById('btn-delete-entry').addEventListener('click', async () => {
-    const idactive = document.getElementById('delete-id-active').value;
-    await deleteActive(idactive);
+// Función para asignar la tarea a un proveedor o empleado
+document.getElementById('btn-asign-entry').addEventListener('click', async () => {
+    const idTask = document.getElementById('asign-id-task').value;
+    
+    await asignTask(idTask);
 
     // Cerrar el modal y mostrar alerta
-    bootstrap.Modal.getInstance(document.getElementById('delete-modal')).hide();
+    bootstrap.Modal.getInstance(document.getElementById('asign-modal')).hide();
     Swal.fire({
-        title: 'Activo eliminado correctamente.',
+        title: 'Tarea asignada correctamente.',
         icon: 'success',
         confirmButtonText: 'OK'
     });
 
     // Recarga la tabla con los datos actualizados
-    await renderActivesTable();
+    await renderTasksTable();
+});
+
+// Eliminar entrada al dar click en el botón del modal
+document.getElementById('btn-delete-entry').addEventListener('click', async () => {
+    const idTask = document.getElementById('delete-id-active').value;
+    await deleteTask(idTask);
+
+    // Cerrar el modal y mostrar alerta
+    bootstrap.Modal.getInstance(document.getElementById('delete-modal')).hide();
+    Swal.fire({
+        title: 'Tarea eliminada correctamente.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+    });
+
+    // Recarga la tabla con los datos actualizados
+    await renderTasksTable();
 });

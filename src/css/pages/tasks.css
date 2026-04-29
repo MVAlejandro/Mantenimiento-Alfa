@@ -25,11 +25,7 @@ th {
 }
 
 /* Estilos de texto para la tabla */
-.tasks-departament, .tasks-day {
+.task-system, .tasks-day {
     font-size: 13px;
-    color: var(--secondary) !important;
-}
-
-.extra-date, .extra-time, .extraP-date, .extraP-time {
     color: var(--secondary) !important;
 }

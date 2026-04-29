@@ -7,7 +7,7 @@ let allSpares = [];
 // Función de filtrado por búsqueda
 export async function sparesFilter() {
     const searchText = document.getElementById('search-filter').value.trim().toLowerCase();
-    // Obtener clientes
+    // Obtener refacciones
     allSpares = await getSpares();
         if (!allSpares) return;
 

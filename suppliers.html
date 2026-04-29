@@ -32,10 +32,10 @@
                                 <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m.256 7a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1zm3.63-4.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382zM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0"/>
                             </svg>
                         </div>
-                        <h4 class="fw-bold">Responsables del Mantenimiento</h4>
+                        <h4 class="fw-bold">Proveedores de Mantenimiento</h4>
                     </div>
                     <div class="col-4 col-md-3 col-lg-2 d-flex align-items-center">
-                        <button id="btn-add-supplier" class="btn btn-primary d-flex align-items-center" data-bs-target="#edit-modal" data-bs-toggle="modal"  data-mant-only>
+                        <button id="btn-add-supplier" class="btn btn-primary d-flex align-items-center d-none" data-mant-only>
                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                             </svg>
@@ -44,6 +44,11 @@
                     </div>
                 </div>
             </div>
+        </section>
+
+        <!-- SECCIÓN DE FORMULARIO PARA AGREGAR REGISTRO -->
+        <section id="suppliers-form">
+            
         </section>
 
         <!-- SECCIÓN DE FILTROS -->
@@ -67,47 +72,33 @@
         </section>
 
         <!-- SECCIÓN DE REGISTROS -->
-        <section id="suppliers" class="pt-1 pb-4">
-            <div id="suppliers-container" class="container table-responsive p-0">
-                <table id="suppliers-table" class="table table-hover align-middle">
-                    <thead>
-                        <tr class="table-light">
-                            <th class="p-1 pt-2 ps-4">TIPO</th>
-                            <th class="p-1 pt-2">NOMBRE</th>
-                            <th class="p-1 pt-2">DETALLES</th>
-                            <th class="p-1 pt-2">ESTADO</th>
-                            <th data-mant-only></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="text-center" colspan="5">No hay responsables asignados</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- SECCIÓN DE PAGINACIÓN -->
-        <section id="suppliers-pages" class="pb-4">
-            <div id="suppliers-pages-container" class="container pt-3 pb-3">
-                <div class="row ms-2 align-items-center">
-                    <div class="col-6 col-lg-9">
-                        <p id="suppliers-pages-results"></p>
+        <section id="suppliers-register" class="pt-1 pb-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg supplier">
+                        <div id="staff-container" class="container pt-3 pb-4">
+                            <h5 class="mb-2 ps-2 title">Internos</h5>
+                            <hr>
+                            <div id="staff-list" class="list-group">
+                                <p class="px-3">No hay registros que mostrar.</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-6 col-lg-3">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination mb-0">
-                                <!-- Los botones se llenan dinámicamente desde JS -->
-                            </ul>
-                        </nav>
+                    <div class="col-lg supplier">
+                        <div id="suppliers-container" class="container pt-3 pb-4">
+                            <h5 class="mb-2 ps-2 title">Externos</h5>
+                            <hr>
+                            <div id="suppliers-list" class="list-group">
+                                <p class="px-3">No hay registros que mostrar.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Modal de edición para cada registro -->
+    <!-- Modal de edición para proveedores externos -->
     <div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="edit-modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content pt-3 pb-3">
@@ -156,9 +147,9 @@
                             </div>
                             <div class="row ms-2 me-2 pt-3 pb-3">
                                 <div class="col label-over-border">
-                                    <label for="edit-address" class="form-label m-2">Dirección</label>
-                                    <input type="text" class="form-control" id="edit-address" autocomplete="off">
-                                    <p class="error invalid-feedback" id="error-editAddress" style="color: red;"></p>
+                                    <label for="edit-location" class="form-label m-2">Dirección</label>
+                                    <input type="text" class="form-control" id="edit-location" autocomplete="off">
+                                    <p class="error invalid-feedback" id="error-editLocation" style="color: red;"></p>
                                 </div>
                             </div>
                         </form>
@@ -167,36 +158,6 @@
                 <div class="modal-footer me-4">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     <button id="btn-edit-entry" class="btn btn-primary">Guardar cambios</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de confirmación para eliminar registro -->
-    <div class="modal fade" id="delete-modal" aria-hidden="true" aria-labelledby="delete-modalLabel" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content pt-3 pb-2">
-                <div class="modal-header">
-                    <div class="row">
-                        <div class="col d-flex align-items-center">
-                            <div class="ms-4 me-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16" style="color: var(--danger-dark)">
-                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                                    <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
-                                </svg>
-                            </div>
-                            <h5 class="modal-title" id="delete-modalLabel">Confirmar eliminación</h5>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body m-auto pt-4 pb-4">
-                    <input type="hidden" id="delete-id-product">
-                    <p>¿Está seguro de querer eliminar el registro seleccionado?</p>
-                </div>
-                <div class="modal-footer me-4">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                    <button id="btn-delete-entry" class="btn btn-primary">Sí</button>
                 </div>
             </div>
         </div>

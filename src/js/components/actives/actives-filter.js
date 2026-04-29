@@ -16,7 +16,7 @@ export async function activesFilter() {
     const searchText = document.getElementById('search-filter').value.trim().toLowerCase();
     const departamentFilter = document.getElementById('departament-filter').value;
 
-    // Obtener solicitudes
+    // Obtener activos
     allActives = await getActives();
         if (!allActives) return;
 

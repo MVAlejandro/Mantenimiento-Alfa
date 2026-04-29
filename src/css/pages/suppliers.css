@@ -8,10 +8,15 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-#suppliers-form-container, #suppliers-filter-container, .table-responsive, #suppliers-pages-container {
+#suppliers-form-container, #suppliers-filter-container, #staff-container, #suppliers-container {
     background-color: var(--background-light) !important;
     border-radius: 1rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    color: var(--secondary);
+    font-weight: bold;
 }
 
 th {
@@ -24,12 +29,29 @@ th {
     }
 }
 
+@media (max-width: 770px) {
+    .supplier {
+        padding-bottom: 1rem;
+    }
+}
+
 /* Estilos de texto para la tabla */
-.suppliers-departament, .suppliers-day {
+.supplier-item, .staff-item {
+    padding: 0 2rem;
+}
+
+.supplier-location, .supplier-phone, .staff-departament, .staff-phone {
     font-size: 13px;
     color: var(--secondary) !important;
 }
 
-.extra-date, .extra-time, .extraP-date, .extraP-time {
-    color: var(--secondary) !important;
+.supplier-email, .staff-id {
+    color: var(--table-blue-dark);
+    text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+    .supplier-item, .staff-item {
+        padding: 0 !important;
+    }
 }

@@ -58,8 +58,8 @@ const deleteModal = document.getElementById('delete-modal');
 // Al abrir modal
 deleteModal.addEventListener('show.bs.modal', event => {
     const button = event.relatedTarget;
-    const idActive = button.dataset.id;
-    document.getElementById('delete-id-spare').value = idActive;
+    const idSpare = button.dataset.id;
+    document.getElementById('delete-id-spare').value = idSpare;
 });
 // Limpiar información al cerrar modal
 deleteModal.addEventListener('hidden.bs.modal', () => {

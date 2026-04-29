@@ -37,7 +37,7 @@
                         <h4 class="fw-bold">Gestión de Tareas</h4>
                     </div>
                     <div class="col-4 col-md-3 col-lg-2 d-flex align-items-center">
-                        <button id="btn-add-supplier" class="btn btn-primary d-flex align-items-center" data-bs-target="#edit-modal" data-bs-toggle="modal"  data-mant-only>
+                        <button id="btn-add-task" class="btn btn-primary d-flex align-items-center d-none" data-mant-only>
                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                             </svg>
@@ -46,6 +46,11 @@
                     </div>
                 </div>
             </div>
+        </section>
+
+        <!-- SECCIÓN DE FORMULARIO PARA AGREGAR REGISTRO -->
+        <section id="tasks-form">
+            
         </section>
 
         <!-- SECCIÓN DE FILTROS -->
@@ -86,9 +91,8 @@
                         <tr class="table-light">
                             <th class="p-1 pt-2 ps-4">NOMBRE</th>
                             <th class="p-1 pt-2">ACTIVO</th>
-                            <th class="p-1 pt-2">PRIORIDAD</th>
                             <th class="p-1 pt-2">PERIODICIDAD</th>
-                            <th class="p-1 pt-2 text-center">ESTADO</th>
+                            <th class="p-1 pt-2">PRIORIDAD</th>
                             <th class="p-1 pt-2">DESCRIPCIÓN</th>
                             <th data-mant-only></th>
                         </tr>
@@ -120,6 +124,67 @@
             </div>
         </section>
     </main>
+
+    <!-- Modal de asignación para cada registro -->
+    <div class="modal fade" id="asign-modal" tabindex="-1" aria-labelledby="asign-modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content pt-3 pb-3">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col d-flex align-items-center">
+                            <div class="ms-4 me-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar2-plus" viewBox="0 0 16 16" style="color:var(--primary)">
+                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
+                                    <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5zM8 8a.5.5 0 0 1 .5.5V10H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V11H6a.5.5 0 0 1 0-1h1.5V8.5A.5.5 0 0 1 8 8"/>
+                                </svg>
+                            </div>
+                            <h5 class="modal-title pt-1" id="asign-modalLabel">Asignar Tarea</h5>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="tasks-asign-form">
+                            <input type="hidden" id="asign-id-task">
+                            <div class="row ms-2 me-2 pt-3 pb-3">
+                                <div class="col-md-12 label-over-border">
+                                    <label for="asign-type" class="form-label m-2">Tipo</label>
+                                    <select id="asign-type" class="form-select" aria-label="Default select example">
+                                        <option value="0">Seleccione...</option>
+                                        <option value="Interno">Interno</option>
+                                        <option value="Externo">Externo</option>
+                                    </select>
+                                    <p class="error invalid-feedback" id="error-asignType" style="color: red;"></p>
+                                </div>
+                            </div>
+                            <div class="row ms-2 me-2 pt-3 pb-3">
+                                <div class="col-md-12 label-over-border">
+                                    <label for="asign-supplier" class="form-label m-2">Responsable</label>
+                                    <select id="asign-supplier" class="form-select" aria-label="Default select example">
+                                        <option value="0">Seleccione...</option>
+
+                                    </select>
+                                    <p class="error invalid-feedback" id="error-asignSupplier" style="color: red;"></p>
+                                </div>
+                            </div>
+                            <div class="row ms-2 me-2 pt-3 pb-3">
+                                <div class="col-md-12 label-over-border">
+                                    <label for="asign-date" class="form-label m-2">Fecha Programada</label>
+                                    <input type="date" class="form-control" id="asign-date" autocomplete="off">
+                                    <p class="error invalid-feedback" id="error-asignDate" style="color: red;"></p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer me-4">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button id="btn-asign-entry" class="btn btn-primary">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal de edición para cada registro -->
     <div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="edit-modalLabel" aria-hidden="true">
@@ -177,7 +242,10 @@
                                     <label for="edit-priority" class="form-label m-2">Prioriddad</label>
                                     <select id="edit-priority" class="form-select" aria-label="Default select example">
                                         <option value="0">Seleccione...</option>
-
+                                        <option value="Preventivo">Preventivo</option>
+                                        <option value="Importante">Importante</option>
+                                        <option value="Urgente">Urgente</option>
+                                        <option value="Muy urgente">Muy urgente</option>
                                     </select>
                                     <p class="error invalid-feedback" id="error-editPriority" style="color: red;"></p>
                                 </div>
@@ -208,7 +276,7 @@
                     <div class="row">
                         <div class="col d-flex align-items-center">
                             <div class="ms-4 me-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16" style="color: var(--danger-dark)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16" style="color: var(--table-red-dark)">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                     <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
                                 </svg>
@@ -219,7 +287,7 @@
                     <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body m-auto pt-4 pb-4">
-                    <input type="hidden" id="delete-id-product">
+                    <input type="hidden" id="delete-id-task">
                     <p>¿Está seguro de querer eliminar el registro seleccionado?</p>
                 </div>
                 <div class="modal-footer me-4">

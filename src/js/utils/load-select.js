@@ -11,7 +11,6 @@ export async function loadOptions(selectId, table, valueKey, textKey, selectedVa
     
     const { data, error } = await supabase.from(table)
         .select(`${valueKey}, ${textKey}`)
-        .order(`${textKey}`, { ascending: true }) 
 
     if (error) {
         console.error(`Error cargando ${table}:`, error)
@@ -33,7 +32,7 @@ export async function loadOptions(selectId, table, valueKey, textKey, selectedVa
 }
 
 // Función para cargar datos en relación a campos registrados
-export async function loadOptionsFilter(selectId, getFunction, displayFields, idField, defaultOption, selectedId = 0) {
+export async function loadOptionsFilter(selectId, getFunction, idField, displayFields, defaultOption, selectedId = 0) {
     const select = document.getElementById(selectId);
     if (!select) return;
 
