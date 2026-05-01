@@ -54,7 +54,7 @@ export async function getTasks() {
         id_activo: tarea.id_activo,
         tipo_activo: tarea.mant_activos?.tipo_activo,
         activo: tarea.mant_activos?.nombre,
-        id_empleado: tarea.mant_activos?.id_empleado,
+        id_encargado: tarea.mant_activos?.id_empleado,
         encargado: tarea.mant_activos?.rh_empleados?.nombre,
         numero_encargado: tarea.mant_activos?.rh_empleados?.numero_empleado,
         puesto_encargado: tarea.mant_activos?.rh_empleados?.puesto,

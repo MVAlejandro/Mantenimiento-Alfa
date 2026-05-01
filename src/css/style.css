@@ -18,8 +18,8 @@
     --table-yellow-dark: #7e6009;
     --table-greenL-light: #bce0c8;
     --table-greenL-dark: #0c6e40;
-    --table-red-light: #dd989f;
-    --table-red-dark: #79111c;
+    --table-red-light: #ffdad6;
+    --table-red-dark: #93000a;
     --table-grey-light: #afafaf;
     --table-grey-dark: #505050;
 }
@@ -185,9 +185,9 @@ input::placeholder, textarea::placeholder, #default-option {
     transition: all 0.3s ease;
 }
 
-.btn-primary:hover {
-    background-color: var(--primary-dark);
-    border-color: var(--primary-dark);
+.btn-primary:hover, .btn-primary.active {
+    background-color: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 

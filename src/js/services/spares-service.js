@@ -23,6 +23,7 @@ export async function getSpares() {
         console.error('Error obteniendo refacciones:', error);
         throw error;
     }
+    console.log(data);
     
     return data
 }
@@ -58,3 +59,69 @@ export async function deleteSpare(idSpare) {
         return;
     }
 };
+
+// -------------------------- REFACCIONES - ORDENES -------------------------------- //
+// Función para obtener las refacciones de una orden de trabajo
+export async function getOrderSpares(idOrder) {
+    const { data, error } = await supabase
+        .from('mant_orden_refaccion')
+        .select(`
+            id_orden_refaccion,
+            id_orden_trabajo,
+            cantidad,
+            id_refaccion,
+            mant_refacciones (*)
+            `)
+        .eq('id_orden_trabajo', idOrder);
+    
+    if (error) {
+        console.error('Error obteniendo refacciones de la orden:', error);
+        throw error;
+    }
+    
+    return data.map(refaccionO => ({
+        id_orden_refaccion: refaccionO.id_orden_refaccion,
+        id_orden_trabajo: refaccionO.id_orden_trabajo,
+        cantidad: refaccionO.cantidad,
+        id_refaccion: refaccionO.id_refaccion,
+        codigo: refaccionO.mant_refacciones?.codigo,
+        refaccion: refaccionO.mant_refacciones?.nombre,
+        costo_unitario: refaccionO.mant_refacciones?.costo_unitario,
+        unidad_medida: refaccionO.mant_refacciones?.unidad_medida
+    }));
+}
+
+// Función para editar las refacciones asignadas a la orden
+export async function updateOrderSpares(idOrder) {
+    const sparesItems = document.querySelectorAll('.spare-item');
+
+    for (const item of sparesItems) {
+        const select = item.querySelector('.spare-select');
+        const quantity = item.querySelector('.spare-select-quantity');
+
+        const id_refaccion = select?.value?.trim();
+        const cantidad = parseFloat(quantity?.value);
+
+        if (!id_refaccion || isNaN(cantidad) || cantidad <= 0) {
+            console.warn("Fila ignorada por datos inválidos");
+            continue;
+        }
+
+        // Intentar insertar y si ya existe actualizar
+        const { data, error } = await supabase
+            .from('mant_orden_refaccion')
+            .upsert(
+                {
+                    id_orden_trabajo: idOrder,
+                    id_refaccion,
+                    cantidad
+                },
+                { onConflict: ['id_orden_trabajo', 'id_refaccion'] }
+            );
+
+        if (error) {
+            console.error('Error actualizando orden:', error);
+            throw error;
+        }
+    }
+}

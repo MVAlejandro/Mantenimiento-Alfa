@@ -61,7 +61,10 @@
                         <label for="priority-filter" class="form-label m-2">Filtrar por Prioridad</label>
                         <select class="form-select" id="priority-filter">
                             <option value="0">Todos</option>
-                            
+                            <option value="Preventivo">Preventivo</option>
+                            <option value="Importante">Importante</option>
+                            <option value="Urgente">Urgente</option>
+                            <option value="Muy urgente">Muy urgente</option>
                         </select>
                     </div>
                     <div class="col-lg-3 col-md-4 d-flex align-items-center label-over-border">
@@ -127,7 +130,7 @@
 
     <!-- Modal de asignación para cada registro -->
     <div class="modal fade" id="asign-modal" tabindex="-1" aria-labelledby="asign-modalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-md">
+        <div class="modal-dialog">
             <div class="modal-content pt-3 pb-3">
                 <div class="modal-header">
                     <div class="row">
@@ -161,7 +164,7 @@
                             <div class="row ms-2 me-2 pt-3 pb-3">
                                 <div class="col-md-12 label-over-border">
                                     <label for="asign-supplier" class="form-label m-2">Responsable</label>
-                                    <select id="asign-supplier" class="form-select" aria-label="Default select example">
+                                    <select id="asign-supplier" class="form-select" aria-label="Default select example" disabled>
                                         <option value="0">Seleccione...</option>
 
                                     </select>
@@ -206,7 +209,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="container">
-                        <form id="tasks-edit-form">
+                        <form id="tasks-complete-form">
                             <input type="hidden" id="edit-id-task">
                             <!-- Campos editables -->
                             <div class="row ms-2 me-2 pt-3 pb-3">

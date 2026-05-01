@@ -15,10 +15,16 @@ import { initPage } from '../utils/session-validate.js';
 import { addTask } from '../components/tasks/tasks-form.js';
 import { renderTasksTable } from '../components/tasks/tasks-table.js';
 import { renderTasksEditModal } from '../components/tasks/tasks-modal.js';
+import { tasksFilter } from '../components/tasks/tasks-filter.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     await initPage();
     renderTasksTable();
+});
+
+// Declarar el botón de filtrado
+document.getElementById("filter-btn").addEventListener('click', async function() {
+    tasksFilter();
 });
 
 // Declarar el botón del formulario
@@ -38,7 +44,16 @@ asignModal.addEventListener('shown.bs.modal', event => {
 });
 // Al cerrar modal
 asignModal.addEventListener('hidden.bs.modal', () => {
-    document.getElementById('asign-id-task').value = '';
+    asignModal.querySelectorAll('.is-valid, .is-invalid').forEach(e => {
+        e.classList.remove('is-valid', 'is-invalid');
+    });
+
+    asignModal.querySelectorAll('input').forEach(el => {
+        el.value = '';
+    });
+    asignModal.querySelectorAll('select').forEach(el => {
+        el.value = '0';
+    });
 });
 
 // Acciones del modal de edición

@@ -24,12 +24,70 @@ th {
     }
 }
 
-/* Estilos de texto para la tabla */
-.planning-departament, .planning-day {
+/* Estilos de texto para el modal */
+#task-responsible, #task-date, #task-status {
+    background-color: var(--background) !important;
+    border-radius: 0.3rem;
+    border: 1px solid var(--secondary-light);
+}
+
+#task-priority {
+    padding: 0rem 0.4rem;
+    border-radius: 0.3rem;
+    color: var(--table-red-dark);
+    background-color: var(--table-red-light);
+}
+
+.title, #task-id {
+    color: var(--secondary) !important;
+    font-weight: bold;
+}
+
+.responsible-departament {
     font-size: 13px;
     color: var(--secondary) !important;
 }
 
-.extra-date, .extra-time, .extraP-date, .extraP-time {
-    color: var(--secondary) !important;
+/* Estilos responsivos para el calendario */ 
+.fc-event {
+    cursor: pointer;
+}
+
+.fc-event:hover {
+    opacity: 0.8;
+}
+
+@media (max-width: 576px) {
+    .fc-toolbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+            
+    .fc-toolbar-title {
+        font-size: 1.4em !important;
+        margin: 5px 0;
+    }
+
+    .fc-header-toolbar .fc-toolbar-chunk {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+            
+    .fc-toolbar-title {
+        font-size: 1.2em !important;
+    }
+            
+    .fc .fc-button {
+        font-size: 0.75em;
+        padding: 0.25em 0.35em;
+    }
+            
+    .fc .fc-view-harness {
+        min-height: 400px !important;
+    }
+            
+    #calendario-element {
+        min-height: 400px;
+    }
 }

@@ -21,7 +21,7 @@ export async function activesFilter() {
         if (!allActives) return;
 
     // Si no hay filtros activos, mostrar todo
-    const filterClean = departamentFilter === '' && searchText === '';
+    const filterClean = departamentFilter === '0' && searchText === '';
 
     if (filterClean) {
         renderActivesTable(allActives);
