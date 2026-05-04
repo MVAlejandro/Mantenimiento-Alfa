@@ -4,6 +4,20 @@ import { planningModal } from "./planning-modal";
 
 let allTasks = [];
 
+// Función para determinar el color de la tarea con abse en su estado
+export function statusColor(status) {
+    switch(status) {
+        case 'Pendiente':
+            return '#c29510';
+        case 'Realizada':
+            return '#34976a';
+        case 'Cancelada':
+            return '#b6000c';
+        default:
+            return '#0f3996';
+    }
+}
+
 // Función para generar el calendario con las tareas programadads
 export async function planningCalendar(tasksParam = null) {
     // Obtener tareaes si no se pasa una lista filtrada

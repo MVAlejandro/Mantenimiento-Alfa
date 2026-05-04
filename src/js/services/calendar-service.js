@@ -1,15 +1,24 @@
 import supabase from '../supabase/supabase-client.js'
+// Utilidades
+import { statusColor } from '../components/planning/planning-calendar.js';
 
-// Función para asignar una tarea a un proveedor
-export async function asignTask(taskData) {
+// Función para agendar las tareas en un arreglo de fechas con un proveedor 
+export async function programTasks(taskData) {
+    // Asegurar que siempre sea un arreglo
+    const register = Array.isArray(taskData) ? taskData : [taskData];
+
     const { data, error } = await supabase
         .from('mant_ordenes_trabajo')
-        .insert([taskData]);
+        .upsert(register, 
+            { onConflict: 'id_tarea, fecha_programada' }
+        );
 
     if (error) {
-        console.error(error);
+        console.error('Error en la programación de tareas:', error);
         throw error;
-    } 
+    }
+
+    return data;
 }
 
 // Función para obtener tareas completas ordenadas por id
@@ -51,10 +60,11 @@ export async function getFullTasks() {
                 ),
 
                 id_periodicidad,
-                mant_periodicidad (nombre, dias)
+                mant_periodicidad (*)
             )
         `)
-        .order('fecha_programada', { ascending: true });
+        .order('fecha_programada', { ascending: true })
+        .order('id_orden_trabajo', { ascending: true });
     
     if (error) {
         console.error('Error obteniendo tareas:', error);
@@ -66,6 +76,7 @@ export async function getFullTasks() {
         title: orden.mant_tareas?.nombre, // tarea
         start: orden.fecha_programada, // fecha_programada
         end: orden.fecha_programada,
+        color: statusColor(orden.estado),
 
         id_orden_trabajo: orden.id_orden_trabajo,
         id_tarea: orden.id_tarea,
@@ -84,7 +95,7 @@ export async function getFullTasks() {
         puesto_encargado: orden.mant_tareas?.mant_activos?.rh_empleados?.puesto,
         departamento: orden.mant_tareas?.mant_activos?.rh_empleados?.rh_departamentos?.nombre,
         periodicidad: orden.mant_tareas?.mant_periodicidad?.nombre,
-        dias_periodicidad: orden.mant_tareas?.mant_periodicidad?.dias
+        rep_periodicidad: orden.mant_tareas?.mant_periodicidad?.repeticiones
     }));
 }
 

@@ -2,12 +2,13 @@ import supabase from '../../supabase/supabase-client.js'
 // Servicios Supabase
 import { getActives } from '../../services/actives-service.js';
 import { getStaff } from '../../services/suppliers-service.js';
-import { updateTask, deleteTask, getPeriodicity } from '../../services/tasks-service.js'; 
-import { asignTask } from '../../services/calendar-service.js';
+import { updateTask, deleteTask, getPeriodicity, findPeriodicity } from '../../services/tasks-service.js'; 
+import { programTasks } from '../../services/calendar-service.js';
 import { renderTasksTable } from './tasks-table.js'; 
 // Utilidades
 import { textValidate, inputValidate, selectValidate } from '../../utils/form-validations.js';
 import { loadOptions, loadOptionsFilter } from '../../utils/load-select.js';
+import { generateDates } from '../../utils/date-functions.js';
 
 // Función para cargar datos en el modal
 export async function renderTasksEditModal(tarea) {
@@ -154,25 +155,37 @@ document.getElementById('btn-asign-entry').addEventListener('click', async () =>
         });
         return
     }
-
-    let taskData;
-
-    if (tipoIn.value == "Interno") {
-        taskData = {
-            id_tarea,
-            id_empleado: id_responsableIn.value,
-            fecha_programada: fecha_programadaIn.value
-        };
-    } else if (tipoIn.value == "Externo") {
-        taskData = {
-            id_tarea,
-            id_proveedor: id_responsableIn.value,
-            fecha_programada: fecha_programadaIn.value
-        };
-    }
     
     try {
-        await asignTask(taskData);
+        // Obtener la periodicidad de la tarea seleccionada
+        const periodicidad = await findPeriodicity(id_tarea);
+
+        if (!periodicidad) throw new Error('Periodicidad no encontrada');
+
+        // Generar una base con la asignación de la tarea a un responsable
+        const baseData = {
+            id_tarea,
+            fecha_programada: fecha_programadaIn.value,
+            ...(tipoIn.value === "Interno"
+                ? { id_empleado: id_responsableIn.value }
+                : { id_proveedor: id_responsableIn.value })
+        };
+
+        // Generar las fechas con la periodicidad
+        const fechas = generateDates(
+            baseData.fecha_programada,
+            periodicidad.nombre,
+            periodicidad.repeticiones
+        );
+
+        // Mapear a órdenes de trabajo para insertar
+        const ordenes = fechas.map(fecha => ({
+            ...baseData,
+            fecha_programada: fecha.toISOString().split('T')[0]
+        }));
+
+        // Insertar órdenes en lote
+        programTasks(ordenes);
 
         form.querySelectorAll('.is-valid, .is-invalid').forEach(e => {
             e.classList.remove('is-valid', 'is-invalid');

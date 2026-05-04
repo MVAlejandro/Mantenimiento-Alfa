@@ -25,8 +25,7 @@ const completeModal = document.getElementById('complete-modal');
 completeModal.addEventListener('shown.bs.modal', event => {
     const button = event.relatedTarget;
     const taskData = JSON.parse(button.getAttribute('task-data'));
-    console.log(taskData);
-    
+
     renderCompleteTaskModal(taskData);
 });
 // Al cerrar modal

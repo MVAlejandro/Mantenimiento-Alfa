@@ -36,7 +36,7 @@ export async function getTasks() {
                 )
             ),
             id_periodicidad,
-            mant_periodicidad (nombre, dias)
+            mant_periodicidad (*)
         `)
         .order('id_tarea', { ascending: true });
     
@@ -62,7 +62,7 @@ export async function getTasks() {
         departamento: tarea.mant_activos?.rh_empleados?.rh_departamentos?.nombre,
         id_periodicidad: tarea.id_periodicidad,
         periodicidad: tarea.mant_periodicidad?.nombre,
-        dias: tarea.mant_periodicidad?.dias,
+        repeticiones: tarea.mant_periodicidad?.repeticiones,
     }));
 }
 
@@ -111,4 +111,27 @@ export async function getPeriodicity() {
     }
     
     return data
+}
+
+// Función para obtener las periodicidades de su tabla
+export async function findPeriodicity(id_tarea) {
+    const { data, error } = await supabase
+        .from('mant_tareas')
+        .select(`
+            id_periodicidad,
+            mant_periodicidad (*)
+        `)
+        .eq('id_tarea', id_tarea)
+        .single();
+    
+    if (error) {
+        console.error('Error obteniendo periodicidad de la tarea:', error);
+        throw error;
+    }
+    
+    return {
+        id_periodicidad: data.id_periodicidad,
+        nombre: data.mant_periodicidad.nombre,
+        repeticiones: data.mant_periodicidad.repeticiones
+    };
 }

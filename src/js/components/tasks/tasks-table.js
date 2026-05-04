@@ -36,8 +36,6 @@ export async function renderTasksTable(tasksParam = null) {
     }
 
     tasks.forEach(tarea => {
-        console.log(tarea);
-        
         tbody.innerHTML += 
         `<tr>
             <td class="task-name p-1 ps-4">${tarea.nombre}</td>
