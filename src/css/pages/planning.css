@@ -18,6 +18,10 @@ th {
     color: var(--secondary) !important;
 }
 
+#logo-info {
+    opacity: 0.5;
+}
+
 @media (min-width: 500px) and (max-width: 768px) {
     #filter-btn {
         margin-top: 1rem;
@@ -43,7 +47,7 @@ th {
     font-weight: bold;
 }
 
-.responsible-departament {
+.responsible-departament, .task-system, .task-departament {
     font-size: 13px;
     color: var(--secondary) !important;
 }

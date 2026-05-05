@@ -26,16 +26,11 @@ export async function planningCalendar(tasksParam = null) {
     } else {
         allTasks = await getFullTasks();
     }
-console.log(allTasks);
+    
     const container = document.getElementById('planning-calendar');
     
     // Limpiar contenedor antes de insertar
     container.innerHTML = '';
-
-    if (!allTasks || allTasks.length === 0) {
-        container.innerHTML = `<p class="ps-3">No hay información para mostrar</p>`;
-        return;
-    }
 
     let calendar = new FullCalendar.Calendar(container, {
         themeSystem: 'bootstrap5',

@@ -56,8 +56,12 @@ export async function renderCompleteTaskModal(tarea) {
     }
 
     if (tarea.estado !== "Pendiente") {
-        modal.querySelectorAll('input, select, textarea, .btn-primary').forEach(e => {
+        modal.querySelectorAll('input, select, textarea, .btn-primary, .btn-delete').forEach(e => {
             e.disabled = true;
+        });
+    } else {
+        modal.querySelectorAll('input, select, textarea, .btn-primary, .btn-delete').forEach(e => {
+            e.disabled = false;
         });
     }
 }
@@ -69,8 +73,8 @@ document.getElementById('btn-add-spare').addEventListener('click', () => {
 
 // Eliminar entrada de producto
 document.addEventListener('click', function(e) {
-    if (e.target.closest('.btn-remove')) {
-        e.target.closest('.orderProduct-item').remove();
+    if (e.target.closest('.btn-delete')) {
+        e.target.closest('.spare-item').remove();
     }
 });
 

@@ -23,7 +23,6 @@ export async function getSpares() {
         console.error('Error obteniendo refacciones:', error);
         throw error;
     }
-    console.log(data);
     
     return data
 }

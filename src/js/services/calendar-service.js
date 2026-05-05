@@ -87,6 +87,7 @@ export async function getFullTasks() {
         observaciones: orden.observaciones,
         responsable: orden.id_empleado ? orden.rh_empleados?.nombre : orden.mant_proveedores?.nombre,
         puesto_responsable: orden.id_empleado ? orden.rh_empleados?.puesto : orden.mant_proveedores?.empresa,
+        tipo_responsable: orden.id_empleado ? "Interno" : "Externo",
         sistema: orden.mant_tareas?.sistema,
         prioridad: orden.mant_tareas?.prioridad,
         descripcion: orden.mant_tareas?.descripcion,

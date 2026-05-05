@@ -38,5 +38,5 @@ export async function activesFilter() {
 
     renderActivesTable(filtered);
 
-    return allActives;
+    return filtered;
 }

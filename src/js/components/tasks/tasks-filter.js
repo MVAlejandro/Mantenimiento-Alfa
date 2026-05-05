@@ -38,5 +38,5 @@ export async function tasksFilter() {
 
     renderTasksTable(filtered);
 
-    return allTasks;
+    return filtered;
 }
